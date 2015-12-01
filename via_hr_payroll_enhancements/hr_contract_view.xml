@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_hr_contract_enh">
+            <field name="name">VIA HR Payroll Enhanced Contract Form</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_payroll.hr_contract_form_inherit"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="/form/notebook/page[@string='Information']/group[@name='right_column']/field[@name='struct_id']" position="after">
+                    <field name="tax_group" required="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

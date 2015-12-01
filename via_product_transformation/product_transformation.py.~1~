@@ -1,0 +1,628 @@
+# -*- encoding: utf-8 -*-
+##############################################################################
+#
+#    OpenERP, Open Source Management Solution
+#    Copyright (c) 2011 - 2013 Vikasa Infinity Anugrah <http: //www.infi-nity.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see http: //www.gnu.org/licenses/.
+#
+##############################################################################
+
+from osv import osv, fields
+import decimal_precision as dp
+import time
+from tools import DEFAULT_SERVER_DATE_FORMAT
+from tools.translate import _
+import netsvc
+
+
+class product_transformation(osv.osv):
+    _name = 'product.transformation'
+    _description = 'Product Transformation'
+
+    def _get_total_finish_cost(self, cr, uid, ids, name, args, context=None):
+        """
+        This method calculates the total cost from the finish goods lines
+        -------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Current Records
+        @param name: Functional field's name
+        @param args: Other arguments
+        @param context: standard Dictionary
+        @return: Dictionary having identifier of the record as key and the total cost as value
+        """
+        res = {}
+        for transformation in self.browse(cr, uid, ids, context=context):
+            total_cost = 0.0
+            for line in transformation.finish_goods_line_ids:
+                total_cost += line.cost_amount
+            res[transformation.id] = total_cost
+        return res
+
+    def _get_total_material_usage_per(self, cr, uid, ids, name, args, context=None):
+        """
+        This method calculates the total material usage percentage from the finish goods lines
+        -------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Current Records
+        @param name: Functional field's name
+        @param args: Other arguments
+        @param context: standard Dictionary
+        @return: Dictionary having identifier of the record as key and the total material usage as value
+        """
+        res = {}
+        for transformation in self.browse(cr, uid, ids, context=context):
+            total_material_usage_per = 0.0
+            for line in transformation.finish_goods_line_ids:
+                total_material_usage_per += line.material_usage_per
+            res[transformation.id] = total_material_usage_per
+        return res
+
+    def _get_total_cost(self, cr, uid, ids, name, args, context=None):
+        """
+        This method calculates the total cost
+        -------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Current Records
+        @param name: Functional field's name
+        @param args: Other arguments
+        @param context: standard Dictionary
+        @return: Dictionary having identifier of the record as key and the total cost as value
+        """
+        res = {}
+        for trans in self.browse(cr, uid, ids, context=context):
+            total = 0.0
+            for prod_cons in trans.consumed_line_ids:
+                if prod_cons.product_id.cost_method in ('fifo', 'lifo', 'lot_based'):
+                    total += prod_cons.prodlot_id.cost_price_per_unit * prod_cons.product_qty
+                else:
+                    total += prod_cons.product_id.standard_price * prod_cons.product_qty
+            res[trans.id] = total
+        return res
+
+    _columns = {
+        'name': fields.char('Product Transformation No.', size=64, required=True),
+        'date': fields.date('Date', required=True),
+        'reference': fields.char('Reference', size=64),
+        'trans_loc_id': fields.many2one('stock.location', 'Transformation Location', required=True),
+        'stock_journal_id': fields.many2one('stock.journal', 'Stock Journal'),
+        'raw_src_loc_id': fields.many2one('stock.location', 'Raw Material Source Location'),
+        'state': fields.selection([('draft', 'Draft'), ('cancel', 'Canceled'), ('consumption', 'Consumption'), ('ready', 'Ready'), ('done', 'Finished')], string="State"),
+        'consume_line_ids': fields.one2many('product.consume.line', 'prod_trans_id', 'Products to Consume'),
+        'consumed_line_ids': fields.one2many('product.consume.line', 'prod_trans2_id', 'Consumed Products'),
+        'finish_goods_loc_id': fields.many2one('stock.location', 'Finished Goods Storage Location'),
+        'finish_goods_line_ids': fields.one2many('finish.goods.line', 'prod_trans_id', 'Finished Goods'),
+        'total_cost': fields.function(_get_total_cost, string='Total Cost', digits_compute=dp.get_precision('Purchase Price')),
+        'responsible_id': fields.many2one('res.users', 'Responsible'),
+        'company_id': fields.many2one('res.company', 'Company', required=True),
+        'memo': fields.text('Memo'),
+        'total_finish_cost': fields.function(_get_total_finish_cost, string='Total Finish Cost', digits_compute=dp.get_precision('Purchase Price')),
+        'total_material_usage_per': fields.function(_get_total_material_usage_per, string="Total Material Usage", digits_compute=dp.get_precision('Purchase Price')),
+        'trans_tmpl_id': fields.many2one('product.transformation.template', 'Transformation Template')
+    }
+
+    def _check_total_cost(self, cr, uid, ids, context=None):
+        """
+        It checks the total cost and the total of cost amounts of the finished goods line is equal or not.
+        --------------------------------------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Identifier(s) of Current record(s)
+        @param context: Standard Dictionary
+        @return: True or False
+        """
+        transformation = self.browse(cr, uid, ids[0], context=context)
+        if transformation.finish_goods_line_ids and not transformation.trans_tmpl_id:
+            return abs(transformation.total_finish_cost - transformation.total_cost) < 0.005
+        return True
+
+    def _check_total_material_per(self, cr, uid, ids, context=None):
+        """
+        It checks the total material usage percentage is equal to 100 or not.
+        ---------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Identifier(s) of Current record(s)
+        @param context: Standard Dictionary
+        @return: True or False
+        """
+        transformation = self.browse(cr, uid, ids[0], context=context)
+        if transformation.finish_goods_line_ids and transformation.trans_tmpl_id:
+            return abs(transformation.total_material_usage_per - 100.0) < 0.005
+        return True
+
+    _constraints = [
+        (_check_total_cost, 'The Total of Cost amounts of the finished goods line must be equal to the total cost of the transformation', ['total_finish_cost']),
+        (_check_total_material_per, 'The Total Percentage of Material Usage of the finished goods line must be equal to 100', ['total_material_usage_per']),
+    ]
+
+    def trans_consume(self, cr, uid, ids, context=None):
+        """
+        This method consumes the products which are in the products to consume list and adds them in the consumed products
+        and create a moves for this products.
+        It also sends the state of the transformation to Consumption and sent the moves in done state.
+        -------------------------------------------------------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Identifier(s) of the current record(s)
+        @param context: Standard Dictionary
+        @return True
+        """
+        prod_cons_obj = self.pool.get('product.consume.line')
+        stock_move_obj = self.pool.get('stock.move')
+        picking_object = self.pool.get('stock.picking')
+        wf_service = netsvc.LocalService('workflow')
+        prod_finish_obj = self.pool.get('finish.goods.line')
+        for trans in self.browse(cr, uid, ids, context=context):
+            vals = {
+                'origin': trans.name,
+                'date': trans.date,
+                'stock_journal_id': trans.stock_journal_id.id,
+                'type': 'internal'
+            }
+            picking_id = picking_object.create(cr, uid, vals, context=context)
+            for cons_line in trans.consume_line_ids:
+                prod_cons_obj.write(cr, uid, [cons_line.id], {'prod_trans_id': False, 'prod_trans2_id': trans.id})
+                move_vals = {
+                    'product_id': cons_line.product_id.id,
+                    'product_qty': cons_line.product_qty,
+                    'product_uom': cons_line.product_uom_id.id,
+                    'prodlot_id': cons_line.prodlot_id.id,
+                    'date': cons_line.consume_date,
+                    'location_id': cons_line.raw_loc_id.id or trans.raw_src_loc_id.id,
+                    'name': trans.name + cons_line.product_id.name,
+                    'location_dest_id': trans.trans_loc_id.id,
+                    'state': 'draft',
+                    'picking_id': picking_id
+                }
+
+                move_id = stock_move_obj.create(cr, uid, move_vals, context=context)
+                prod_cons_obj.write(cr, uid, [cons_line.id], {'stock_move_id': move_id})
+            wf_service.trg_validate(uid, 'stock.picking', picking_id, 'button_confirm', cr)
+            picking_object.force_assign(cr, uid, [picking_id], context)
+            wf_service.trg_validate(uid, 'stock.picking', picking_id, 'button_done', cr)
+            if not trans.trans_tmpl_id:
+                prod_finish_obj.compute_usage_cost_amount(cr, uid, trans, False, context=context)
+            else:
+                for f_line in trans.finish_goods_line_ids:
+                    cost_amount = (f_line.material_usage_per * trans.total_cost) / 100
+                    prod_finish_obj.write(cr, uid, [f_line.id], {'cost_amount': cost_amount}, context=context)
+            self.write(cr, uid, [trans.id], {'state': 'consumption'}, context=context)
+        return True
+
+    _defaults = {
+        'name': lambda obj, cr, uid, context: obj.pool.get('ir.sequence').get(cr, uid, 'product.transformation'),
+        'state': lambda * a: 'draft',
+        'date': lambda * a: time.strftime(DEFAULT_SERVER_DATE_FORMAT),
+        'responsible_id': lambda self, cr, uid, ctx: uid,
+        'company_id': lambda self, cr, uid, c: self.pool.get('res.users').browse(cr, uid, uid, c).company_id.id,
+    }
+
+    def trans_ready(self, cr, uid, ids, context=None):
+        """
+        This method checks the finished goods and if there are missing fields, it acknowledges the users regarding the same.
+        """
+        for trans in self.browse(cr, uid, ids, context=context):
+            for f_line in trans.finish_goods_line_ids:
+                if not f_line.prodlot_id:
+                    #error_str = 'Please assign a lot in the finished goods line for product: ' + f_line.product_id.name
+                    #raise osv.except_osv('User Error!', error_str)
+		    f_line.prodlot_id = ''
+        self.write(cr, uid, ids, {'state': 'ready'}, context=context)
+        return True
+
+    def trans_done(self, cr, uid, ids, context=None):
+        """
+        This method finish the products which are in the finish goods product list and create moves for this finish products.
+        It also sent the moves in done state.
+        -------------------------------------------------------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Identifier(s) of the current record(s)
+        @param context: Standard Dictionary
+        @return True
+        """
+        if context is None:
+            context = {}
+        stock_move_obj = self.pool.get('stock.move')
+        product_object = self.pool.get('product.product')
+        picking_object = self.pool.get('stock.picking')
+        product_lot_object = self.pool.get('stock.production.lot')
+        wf_service = netsvc.LocalService('workflow')
+        for transformation in self.browse(cr, uid, ids, context=context):
+            vals = {
+                'origin': transformation.name,
+                'date': transformation.date,
+                'stock_journal_id': transformation.stock_journal_id.id,
+                'type': 'in'
+            }
+            picking_id = picking_object.create(cr, uid, vals, context=context)
+            for finish_line in transformation.finish_goods_line_ids:
+                vals = {
+                    'product_id': finish_line.product_id.id,
+                    'product_qty': finish_line.product_qty,
+                    'product_uom': finish_line.product_uom_id.id,
+                    'prodlot_id': finish_line.prodlot_id.id,
+                    'date': finish_line.date,
+                    'location_id': transformation.trans_loc_id.id,
+                    'name': transformation.name + finish_line.product_id.name,
+                    'location_dest_id': finish_line.finish_goood_loc_id.id or transformation.finish_goods_loc_id.id,
+                    'state': 'draft',
+                    'picking_id': picking_id
+                }
+                move_id = stock_move_obj.create(cr, uid, vals, context=context)
+                finish_line.write({'stock_move_id': move_id})
+                stock_move_data = stock_move_obj.browse(cr, uid, move_id, context=context)
+                if finish_line.product_id.cost_method in ('fifo', 'lifo', 'lot_based'):
+                    product_lot_object.write(cr, uid, [stock_move_data.prodlot_id.id], {'cost_price_per_unit': finish_line.cost_amount / finish_line.product_qty}, context=context)
+                else:
+                    product_object.write(cr, uid, [stock_move_data.product_id.id], {'standard_price': finish_line.cost_amount / finish_line.product_qty}, context=context)
+                if stock_move_data.state != 'draft':
+                    raise osv.except_osv(_('Warning'), _("Selected Move cannot be done as they are already 'Done' state!"))
+            wf_service.trg_validate(uid, 'stock.picking', picking_id, 'button_confirm', cr)
+            picking_object.force_assign(cr, uid, [picking_id], context)
+            wf_service.trg_validate(uid, 'stock.picking', picking_id, 'button_done', cr)
+            self.write(cr, uid, [transformation.id], {'state': 'done'}, context)
+        return True
+
+    def unlink(self, cr, uid, ids, context=None):
+        """
+        Overridden unlink method to delete a record which is in cancel state.
+        ---------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Identifier of the list of records.
+        @param context: Standard Dictionary
+        """
+
+        if context is None:
+            context = {}
+        product_transform_data = self.browse(cr, uid, ids, context)
+        for record in product_transform_data:
+            if record.state != 'cancel':
+                raise osv.except_osv(_('Error'), _('You can not delete record because it is not in cancel state.'))
+        return super(product_transformation, self).unlink(cr, uid, ids, context=context)
+
+    def update_consume_line(self, cr, uid, ids, context=None):
+        context.update({'default_prod_trans_id': ids[0]})
+        mod_obj = self.pool.get('ir.model.data')
+        model_data_ids = mod_obj.search(cr, uid, [('model', '=', 'ir.ui.view'), ('name', '=', 'product_consume_update_form_view')], context=context)
+        resource_id = mod_obj.read(cr, uid, model_data_ids, fields=['res_id'], context=context)[0]['res_id']
+        return {
+            'name': 'Update Consume Line',
+            'res_model': 'product.consume.update',
+            'view_type': 'form',
+            "view_mode": 'form',
+            'type': 'ir.actions.act_window',
+            'views': [(resource_id, 'form')],
+            'target': 'new',
+            'context': context,
+            'nodestroy': True,
+        }
+
+product_transformation()
+
+
+class proudct_consume_line(osv.osv):
+    _name = 'product.consume.line'
+    _description = 'Product Consume Line'
+
+    def name_get(self, cr, uid, ids, context=None):
+        if not ids:
+            return []
+        reads = self.read(cr, uid, ids, ['product_id'], context=context)
+        res = []
+        for record in reads:
+            name = record['product_id'][1]
+            res.append((record['id'], name))
+        return res
+
+    def onchange_product_id(self, cr, uid, ids, product_id=False, product_uom_id=False, product_qty=0.0, raw_loc_id=False):
+        """
+        Set the prodct default UoM when you select a product
+        ----------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Current Records
+        @param product_id: The Product's identifier which is selected.
+        @return: A Dictionary which has key as value and a dictionary of field and values as value.
+        """
+        res = {'value': {}}
+        if product_id:
+            product = self.pool.get('product.product').browse(cr, uid, product_id)
+            res['value'] = {'cost_method': product.cost_method}
+            if not product_uom_id:
+                res['value'].update({'product_uom_id': product.uom_id.id})
+        else:
+            res['value'] = {'product_uom_id': False}
+        if ids:
+            for cons_line in self.browse(cr, uid, ids[0]):
+                res['value'].update({'raw_mat_loc_id': cons_line.prod_trans_id.raw_src_loc_id, 'raw_loc_id': cons_line.prod_trans_id.row_src_loc_id})
+        return res
+
+    def check_avail_stock_lot(self, cr, uid, ids, prodlot_id, product_qty, context=None):
+        res = {}
+        stock_prod_lot_obj = self.pool.get('stock.production.lot')
+        if prodlot_id:
+            product_lot = stock_prod_lot_obj.browse(cr, uid, prodlot_id, context)
+            if product_lot.stock_available < product_qty:
+                raise osv.except_osv(_('User Error!'), _('Required stock is not available for this product in the Production Lots!'))
+        return res
+
+    _columns = {
+        'prod_trans_id': fields.many2one('product.transformation', 'Product Transformation'),
+        'prod_trans2_id': fields.many2one('product.transformation', 'Product Transformation'),
+        'product_id': fields.many2one('product.product', 'Product', required=True),
+        'product_qty': fields.float('Qty', digits_compute=dp.get_precision('Product UoS'), required=True,),
+        'product_uom_id': fields.many2one('product.uom', 'UoM ', required=True),
+        'raw_loc_id': fields.many2one('stock.location', 'Raw Material Loc.'),
+        'prodlot_id': fields.many2one('stock.production.lot', 'Lot #'),
+        'consume_date': fields.date('Date', required=True),
+        'cost_method': fields.related('product_id', 'cost_method', string='Cost Method', type='char'),
+        'is_loc_selected': fields.boolean('Is Location Selected ?'),
+        'stock_move_id': fields.many2one('stock.move', 'Stock Move', readonly=True, help="Link to the automatically generated Stock Move."),
+    }
+
+    def _get_loc_value(self, cr, uid, context=None):
+        if context.get('raw_loc', False):
+            return True
+        return False
+
+    _defaults = {
+        'consume_date': time.strftime(DEFAULT_SERVER_DATE_FORMAT),
+        'product_qty': lambda * a: 1.0,
+        'is_loc_selected': _get_loc_value,
+    }
+
+proudct_consume_line()
+
+
+class finish_goods_line(osv.osv):
+    _name = 'finish.goods.line'
+    _description = 'Finished Goods'
+    _rec_name = 'product_id'
+
+    def _get_ready_state(self, cr, uid, ids, name, args, context=None):
+        """
+        To get the state of the transformation return True if ready
+        -----------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Current Record's Identifiers
+        @param name: Name of the functional field
+        @param args: Other Arguments
+        @param context: Standard Dictionary
+        @return : Dictionary having record's identifier as key and boolean True/False as value
+        """
+        res = {}
+        for f_good in self.browse(cr, uid, ids, context=context):
+            res[f_good.id] = f_good.prod_trans_id.state == 'ready'
+        return res
+
+    def onchange_product_id(self, cr, uid, ids, product_id):
+        """
+        Set the prodct default UoM when you select a product
+        ----------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Current Records
+        @param product_id: The Product's identifier which is selected.
+        @return: A Dictionary which has key as value and a dictionary of field and values as value.
+        """
+        res = {}
+        if product_id:
+            product = self.pool.get('product.product').browse(cr, uid, product_id)
+            res['value'] = {'product_uom_id': product.uom_id.id, 'cost_method': product.cost_method}
+        else:
+            res['value'] = {'product_uom_id': False}
+        return res
+
+    _columns = {
+        'state_flag': fields.function(_get_ready_state, string='State', type='boolean'),
+        'prod_trans_id': fields.many2one('product.transformation', 'Product Transformation'),
+        'product_id': fields.many2one('product.product', 'Product', domain=[('type', '<>', 'service')]),
+        'product_qty': fields.float('Qty'),
+        'product_uom_id': fields.many2one('product.uom', 'UoM', digits_compute=dp.get_precision('Product UoS')),
+        'finish_goood_loc_id': fields.many2one('stock.location', 'Finished Goods Loc'),
+        'prodlot_id': fields.many2one('stock.production.lot', 'Lot #'),
+        'date': fields.date('Date'),
+        'material_usage_per': fields.float('Material Usage %', digits_compute=dp.get_precision('Purchase Price')),
+        'cost_amount': fields.float('Cost Amount', required=True, digits_compute=dp.get_precision('Purchase Price')),
+        'cost_method': fields.related('product_id', 'cost_method', string='Cost Method', type='char'),
+        'is_loc_selected': fields.boolean('Is Location Selected ?'),
+        'qty_update': fields.boolean('Qty Update'),
+        'stock_move_id': fields.many2one('stock.move', 'Stock Move', readonly=True, help="Link to the automatically generated Stock Move."),
+    }
+
+    _defaults = {
+        'cost_amount': 1.0
+    }
+
+    def _get_loc_value(self, cr, uid, context=None):
+        if context.get('finished_loc', False):
+            return True
+        return False
+
+    _defaults = {
+        'date': time.strftime(DEFAULT_SERVER_DATE_FORMAT),
+        'product_qty': lambda * a: 1.0,
+        'is_loc_selected': _get_loc_value,
+    }
+
+    def compute_usage_cost_amount(self, cr, uid, transformation, recalculate_mp=True, context=None):
+        if transformation.finish_goods_line_ids:
+            finish_goods = transformation.finish_goods_line_ids
+            finish_qty_list = [line.product_qty for line in finish_goods]
+            total_cost = transformation.total_cost
+            prod_qty_total = reduce(lambda x, y: x + y, finish_qty_list)
+            for line in finish_goods:
+                if recalculate_mp:
+                    material_usage = (line.product_qty / prod_qty_total)
+                else:
+                    material_usage = line.material_usage_per / 100
+                cost_amount = material_usage * total_cost
+                self.write(cr, uid, [line.id], {'material_usage_per': material_usage * 100, 'cost_amount': cost_amount}, context=context)
+        return True
+
+    def create(self, cr, uid, vals, recalculate_mp=True, context=None):
+        '''
+        Set the Material Usage % and Cost Amount on the basis of Product quantity and total quantity
+        --------------------------------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param vals: Current Record Dictionary
+        @return: ID of created record
+        '''
+        finish_goods_line_id = super(finish_goods_line, self).create(cr, uid, vals, context=context)
+        finish_goods_lines = self.browse(cr, uid, finish_goods_line_id, context=context)
+        self.compute_usage_cost_amount(cr, uid, finish_goods_lines.prod_trans_id, recalculate_mp, context=context)
+        return finish_goods_line_id
+
+    def write(self, cr, uid, ids, vals, context=None):
+        '''
+        Set the Material Usage % and Cost Amount on the basis of Product quantity and total quantity
+        --------------------------------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param id: Current Record ID
+        @param vals: Current Record Dictionary
+        '''
+        if not isinstance(ids, list):
+            ids = [ids]
+        for act_finish_line in self.browse(cr, uid, ids, context=context):
+            if act_finish_line.qty_update:
+                flag = False
+                vals.update({'qty_update': False})
+                transformation = act_finish_line.prod_trans_id
+                total_cost = transformation.total_cost
+                total_qty = 0.0
+                for fin_line in transformation.finish_goods_line_ids:
+                    if act_finish_line.id != fin_line.id:
+                        total_qty += fin_line.product_qty
+                    else:
+                        if vals.get('product_qty', False) and act_finish_line.product_qty != vals.get('product_qty', 0.0):
+                            total_qty += vals['product_qty']
+                            flag = True
+                if flag:
+                    for fin_line in transformation.finish_goods_line_ids:
+                        if act_finish_line.id != fin_line.id:
+                            material_usage = float(fin_line.product_qty) / float(total_qty)
+                            material_usage_per = material_usage * 100
+                            cost_amount = total_cost * material_usage
+                            cr.execute('update finish_goods_line set material_usage_per=%s,cost_amount=%s where id=%s', (material_usage_per, cost_amount, fin_line.id))
+        return super(finish_goods_line, self).write(cr, uid, ids, vals, context=context)
+
+    def unlink(self, cr, uid, ids, context=None):
+        '''
+        Set the Material Usage % and Cost Amount on the basis of Product quantity and total quantity
+        --------------------------------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param id: Current Record ID
+        '''
+        active_finish_goods_line = self.browse(cr, uid, ids[0], context=context)
+        transformation = active_finish_goods_line.prod_trans_id
+        finish_qty_list = [line.product_qty for line in transformation.finish_goods_line_ids if line.id != ids[0]]
+        prod_qty_total = reduce(lambda x, y: x + y, finish_qty_list)
+        for line in transformation.finish_goods_line_ids:
+            if line.id != ids[0]:
+                material_usage = (line.product_qty / prod_qty_total)
+                cost_amount = material_usage * trans_rec.get('total_cost')
+                self.write(cr, uid, [line.id], {'material_usage_per': material_usage * 100, 'cost_amount': cost_amount}, context=context)
+        return super(finish_goods_line, self).unlink(cr, uid, ids, context=context)
+
+    def onchange_product_qty(self, cr, uid, ids, product_qty, total_cost, context=None):
+        """
+        When you change quantity in the finish goods line, this method updates the cost amount and material usage.
+        ----------------------------------------------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in user
+        @param ids: Identifiers of the current records
+        @param product_qty: Product Qty that is changed
+        @param total_cost: Total cost of the transformation
+        @param context: Standard Dictionary
+        @return A Dictionary that contains 'value' as key and field,value dictionary as value
+        """
+        res = {}
+        if ids and total_cost:
+            active_finish_line = self.browse(cr, uid, ids[0], context=context)
+            transformation = active_finish_line.prod_trans_id
+            total_qty = 0.0
+            for line in transformation.finish_goods_line_ids:
+                if line.id != active_finish_line.id:
+                    total_qty += line.product_qty
+                else:
+                    up_id = line.id
+            if product_qty != line.product_qty:
+                total_qty += product_qty
+                material_usage = float(product_qty) / float(total_qty)
+                cost_amount = material_usage * total_cost
+                res['value'] = {'material_usage_per': material_usage * 100, 'cost_amount': cost_amount}
+                cr.execute('update finish_goods_line set qty_update=True where id=%s', (up_id,))
+        return res
+
+    def onchange_material_per(self, cr, uid, ids, material_usage, total_cost):
+        """
+        When you change the material percentage it changes the cost amount of the particular finished goods line.
+        ---------------------------------------------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Identifier(s) of the current record(s)
+        @param material_usage: material usage that is changed
+        @param total_cost: Total cost of the transformation
+        @return A Dictionary that contains 'value' as key and field,value dictionary as value
+        """
+        res = {}
+        cost_amount = float(material_usage) / 100.0 * total_cost
+        res['value'] = {'cost_amount': cost_amount}
+        return res
+
+    def onchange_cost_amount(self, cr, uid, ids, cost_amount, total_cost):
+        """
+        When you change the cost_amount it changes the material usage percentage of the particular finished goods line.
+        ---------------------------------------------------------------------------------------------------------
+        @param self: Object Pointer
+        @param cr: Database Cursor
+        @param uid: Current Logged in User
+        @param ids: Identifier(s) of the current record(s)
+        @param cost_amount: Cost amount which is changed
+        @param total_cost: Total cost of the transformation
+        @return A Dictionary that contains 'value' as key and field,value dictionary as value
+        """
+        res = {}
+        if total_cost:
+            material_usage_per = float(cost_amount) / float(total_cost) * 100
+            res['value'] = {'material_usage_per': material_usage_per}
+        return res
+
+finish_goods_line()

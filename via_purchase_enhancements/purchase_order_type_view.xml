@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+<!--{{{ views -->
+<!--{{{ purchase.order.type -->
+<record id="view_purchase_order_type_tree" model="ir.ui.view">
+    <field name="name">purchase.order.type.tree</field>
+    <field name="model">purchase.order.type</field>
+    <field name="type">tree</field>
+    <field name="arch" type="xml">
+        <tree string="Purchase Order Type">
+            <field name="company_id"/>
+            <field name="name"/>
+        </tree>
+    </field>
+</record>
+
+<record id="view_purchase_order_type_form" model="ir.ui.view">
+    <field name="name">purchase.order.type.form</field>
+    <field name="model">purchase.order.type</field>
+    <field name="type">form</field>
+    <field name="arch" type="xml">
+        <form string="Purchase Order Type">
+            <field name="name"/>
+            <field name="company_id"/>
+            <field name="sequence_id" domain="[('company_id', '=', company_id)]"/>
+        </form>
+    </field>
+</record>
+<!--}}}-->
+
+<!--{{{ actions -->
+<act_window id="act_purchase_order_type" 
+    name="Purchase Order Type" 
+    res_model="purchase.order.type" 
+    view_type="form" 
+    view_mode="tree,form"/>
+<!--}}}-->
+
+<!--{{{ menu -->
+<menuitem 
+    id="menu_purchase_order_config" name="Purchase Order"
+    parent="purchase.menu_purchase_config_purchase" sequence="40"/>
+
+<menuitem id="menu_purchase_order_type" 
+    groups="base.group_extended"
+    parent="menu_purchase_order_config" 
+    action="act_purchase_order_type"/>
+<!--}}}-->
+
+</data>
+</openerp>

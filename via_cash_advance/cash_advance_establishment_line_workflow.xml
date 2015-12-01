@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      <!-- Workflow -->
+        <record id="wkf_cash_advance_establishment_line_basic" model="workflow">
+            <field name="name">cash.advance.establishment.line.basic</field>
+            <field name="osv">cash.advance.establishment.line</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <!-- Activity (Workflow States) -->
+        <record id="act_establishment_line_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_cash_advance_establishment_line_basic"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+        </record>
+        <record id="act_establishment_line_pending" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_cash_advance_establishment_line_basic"/>
+            <field name="name">pending</field>
+            <field name="kind">function</field>
+            <field name="action">action_pending()</field>
+        </record>
+        <record id="act_establishment_line_confirm" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_cash_advance_establishment_line_basic"/>
+            <field name="name">done</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">action_confirm()</field>
+        </record>
+        <record id="act_establishment_line_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_cash_advance_establishment_line_basic"/>
+            <field name="name">cancel</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">stopall</field>
+            <field name="action">action_cancel()</field>
+        </record>
+        <record id="act_establishment_line_rejected" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_cash_advance_establishment_line_basic"/>
+            <field name="name">rejected</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">stopall</field>
+            <field name="action">action_rejected()</field>
+        </record>
+
+        <!-- Transition -->
+        <record id="trans_establishment_line_draft_pending" model="workflow.transition">
+            <field name="act_from" ref="act_establishment_line_draft"/>
+            <field name="act_to" ref="act_establishment_line_pending"/>
+	    <field name="group_id" ref="group_cash_advance_manager"/>
+            <field name="signal">line_pending</field>
+        </record>
+
+        <record id="trans_establishment_line_pending_done" model="workflow.transition">
+            <field name="act_from" ref="act_establishment_line_pending"/>
+            <field name="act_to" ref="act_establishment_line_confirm"/>
+	    <field name="group_id" ref="account.group_account_user"/>
+            <field name="signal">line_confirm</field>
+        </record>
+
+        <record id="trans_establishment_line_draft_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_establishment_line_draft"/>
+            <field name="act_to" ref="act_establishment_line_cancel"/>
+	    <field name="group_id" ref="group_cash_advance_user"/>
+            <field name="signal">line_cancel</field>
+        </record>
+
+        <record id="trans_establishment_line_pending_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_establishment_line_pending"/>
+            <field name="act_to" ref="act_establishment_line_cancel"/>
+	    <field name="group_id" ref="group_cash_advance_manager"/>
+            <field name="signal">line_cancel</field>
+        </record>
+
+        <record id="trans_establishment_line_pending_rejected" model="workflow.transition">
+            <field name="act_from" ref="act_establishment_line_pending"/>
+            <field name="act_to" ref="act_establishment_line_rejected"/>
+	    <field name="group_id" ref="account.group_account_user"/>
+            <field name="signal">line_rejected</field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<openerp>
+<data>
+
+<record id="view_partner_parameter_tree" model="ir.ui.view">
+    <field name="name">partner.parameter.tree</field>
+    <field name="model">partner.parameter</field>
+    <field name="type">tree</field>
+    <field name="arch" type="xml">
+        <tree string="Partner Parameter">
+            <field name="name"/>
+        </tree>
+    </field>
+</record>
+
+<record id="view_partner_parameter_form" model="ir.ui.view">
+    <field name="name">partner.parameter.form</field>
+    <field name="model">partner.parameter</field>
+    <field name="type">form</field>
+    <field name="arch" type="xml">
+        <form string="Partner Parameter">
+            <field name="name"/>
+        </form>
+    </field>
+</record>
+
+<act_window id="act_partner_parameter" 
+    name="Partner Parameter" 
+    res_model="partner.parameter" 
+    view_type="form" 
+    view_mode="tree,form"/>
+
+<menuitem 
+    id="menu_partner_parameter_config" name="Partner Parameter"
+    parent="base.menu_res_company_global" action="act_partner_parameter"/>
+
+
+</data>
+</openerp>

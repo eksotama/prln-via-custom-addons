@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="form_account_wizardTaxRealisation" model="ir.ui.view">
+            <field name="name">Wizard Tax Realisation</field>
+            <field name="model">account.wizard_tax_realisation</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Tax Realisation">
+                    <group colspan="2" col="3">
+                        <field name="realisation_date" colspan="3"/>
+                        <newline/>
+                        <label string=""/>
+                        <button icon="gtk-cancel" special="cancel" string="Cancel"/>
+                        <button name="realise_tax" type="object" string="Realise" icon="gtk-execute"/>
+                    </group>
+                    <label colspan="2" string=""/>
+                </form>
+            </field>
+        </record>
+
+        <record id="waction_account_wizardTaxRealisation" model="ir.actions.act_window">
+            <field name="name">Tax Realisation</field>
+            <field name="res_model">account.wizard_tax_realisation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="form_account_wizardTaxRealisation"/>
+            <field name="context">{'record_id' : active_id}</field>
+            <field name="target">new</field>
+       </record>
+    </data>
+</openerp>

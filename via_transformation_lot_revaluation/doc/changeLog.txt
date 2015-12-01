@@ -1,0 +1,18 @@
+============================================================================================================================
+ Version Change Log (via_transformation_lot_revaluation)
+============================================================================================================================
+
+1.01  --> November 06,2012 : Anup
+    * Developed a new module to revaluate the lot of transformed products.
+
+1.02  --> November 11, 2012 : Kalpana
+    * Added functionality of creating valuation when transformation is done and consumed product price increases.
+    
+1.03 --> December 8,2012 : Anup
+    * Fixed the recursive valuaiton of lots for the transformed products to finished goods
+
+1.04 --> December 10,2012 : Anup
+    * Fixed the isses with total cost wrongly computed, material percentage not working and valuation price should be positive if the price was decreased
+
+1.05 -->December 10, 2012 : Anup
+    * Fixed the issue with amounts calculation in the recursive lots of finished products

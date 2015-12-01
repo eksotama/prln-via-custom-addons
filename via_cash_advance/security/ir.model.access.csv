@@ -1,0 +1,12 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"cash_advance_journal_selection_user","cash_advance_journal_selection user","model_cash_advance_journal_selection","group_cash_advance_user",1,0,0,0
+"cash_advance_journal_selection_manager","cash_advance_journal_selection manager","model_cash_advance_journal_selection","group_cash_advance_manager",1,1,1,1
+"cash_advance_journal_selection_ro","cash_advance_journal_selection read-only","model_cash_advance_journal_selection",,1,0,0,0
+
+"cash_advance_establishment_user","cash_advance_establishment user","model_cash_advance_establishment","group_cash_advance_user",1,1,1,1
+"cash_advance_establishment_manager","cash_advance_establishment manager","model_cash_advance_establishment","group_cash_advance_manager",1,1,1,1
+"cash_advance_establishment_ro","cash_advance_establishment read-only","model_cash_advance_establishment",,1,0,0,0
+
+"cash_advance_establishment_line_user","cash_advance_establishment_line user","model_cash_advance_establishment_line","group_cash_advance_user",1,1,1,1
+"cash_advance_establishment_line_manager","cash_advance_establishment_line manager","model_cash_advance_establishment_line","group_cash_advance_manager",1,1,1,1
+"cash_advance_establishment_line_ro","cash_advance_establishment_line read-only","model_cash_advance_establishment_line",,1,0,0,0

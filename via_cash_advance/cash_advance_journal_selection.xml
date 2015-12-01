@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <record model="ir.ui.view" id="cash_advance_journal_selection_form">
+      <field name="name">Cash Advance Journal</field>
+      <field name="model">cash.advance.journal.selection</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+        <form string="Cash Advance Journal">
+          <field name="journal" widget="selection"/>
+        </form>
+      </field>
+    </record>
+    <record model="ir.ui.view" id="cash_advance_journal_selection_tree">
+      <field name="name">Cash Advance Journals</field>
+      <field name="model">cash.advance.journal.selection</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+	<tree string="Cash Advance Journals" editable="bottom">
+	  <field name="journal" widget="selection"/>
+	</tree>
+      </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_cash_advance_journal_selection">
+      <field name="name">Cash Advance Journals</field>
+      <field name="res_model">cash.advance.journal.selection</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem
+       parent="account.menu_configuration_misc"
+       id="menu_cash_advance_journal_selection"
+       action="action_cash_advance_journal_selection"/>
+  </data>
+</openerp>

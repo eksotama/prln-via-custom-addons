@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="product_consume_form_view">
+            <field name="name">Product Consume Form</field>
+            <field name="model">product.consume</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Product To Consume">
+                    <group colspan="4" col="6">
+                        <group colspan="2" col="2">
+                            <field name="product_id"
+                                on_change="onchange_product_id(product_id, product_uom_id, prodlot_id)"/>
+                            <field name="consume_date"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="product_qty"
+                                on_change="check_avail_stock_lot(prod_trans_id, product_id, product_uom_id, raw_loc_id, prodlot_id, product_qty)"/>
+                            <field name="raw_loc_id"
+                                attrs="{'required':[('is_loc_selected', '=', False)]}"
+                                on_change="check_avail_stock_lot(prod_trans_id, product_id, product_uom_id, raw_loc_id, prodlot_id, product_qty)"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="product_uom_id" nolabel="1" colspan="2"
+                                on_change="check_avail_stock_lot(prod_trans_id, product_id, product_uom_id, raw_loc_id, prodlot_id, product_qty)"/>
+                            <field name="prodlot_id"
+                                attrs="{'invisible': [('is_lot_based', '=', False)], 'required':[('is_auto_assign', '=', False), ('is_lot_based', '=', True)]}"
+                                on_change="check_avail_stock_lot(prod_trans_id, product_id, product_uom_id, raw_loc_id, prodlot_id, product_qty)"/>
+                            <field name="prod_trans_id" invisible="1"/>
+                            <field name="is_loc_selected" invisible="1"/>
+                            <field name="is_lot_based" invisible="1"/>
+                            <field name="is_auto_assign" invisible="1"/>
+                        </group>
+                    </group>
+                    <newline/>
+                    <group colspan="4">
+                        <button special="cancel" string="Cancel" type="object" icon="gtk-cancel"/>
+                        <button name="get_product_to_consume"  string="Consume" type="object" icon="gtk-execute"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_product_consume_form_view">
+            <field name="name">Product To Consume</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.consume</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="product_consume_form_view"/>
+        </record>
+    </data>
+</openerp>

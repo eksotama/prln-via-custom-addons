@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <delete id="view_account_invoice_inherit_form" model="ir.ui.view"/>
+        <delete id="view_taxform_ppnbm_tree" model="ir.ui.view"/>
+        <delete id="view_taxform_ppnbm" model="ir.ui.view"/>
+        <delete id="account_tax_report_report" model="ir.ui.view"/>
+        <delete id="action_report_account_tax_report" model="ir.actions.act_window"/>
+        <delete id="menu_operational_report" model="ir.ui.menu"/>
+        <delete id="account_tax_report" model="ir.ui.menu"/>
+        <delete id="taxform_category" model="code.category"/>
+        <!-- delete id="doc_type_taxform" model="document.type"/ -->
+    </data>
+</openerp>

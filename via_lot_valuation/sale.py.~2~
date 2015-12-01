@@ -1,0 +1,153 @@
+# -*- coding: utf-8 -*-
+##############################################################################
+#    
+#    OpenERP, Open Source Management Solution
+#    Copyright (C) 2012 Infinity  PT. Vikasa Infinity Anugrah (<http://www.infi-nity.com>) 
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Affero General Public License as
+#    published by the Free Software Foundation, either version 3 of the
+#    License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.     
+#
+#############################################################################
+from osv import osv,fields
+from tools.translate import _
+
+class sale_order(osv.osv):
+
+    _inherit = 'sale.order'
+
+    def _create_pickings_and_procurements(self, cr, uid, order, order_lines, picking_id, context):
+        """
+        This method is creating move of the product from prodution Lot Based on FIFO/LIFO costing method 
+        ------------------------------------------------------------------------------------------------
+        @param self : ojbect pointer
+        @param cr : database cursor
+        @param uid : current logged in user
+        @param order : browse record of sale order
+        @param order_lines : contain list of browse moves of sale order
+        @param picking_id : contain delivery order's id of created from sale order
+        @param context : Standard Dictionary
+        """
+        result = super(sale_order, self)._create_pickings_and_procurements(cr, uid, order, order_lines, picking_id, context)
+        lot_obj = self.pool.get('stock.production.lot')
+        stock_move_obj = self.pool.get('stock.move')
+        pick_obj = self.pool.get('stock.picking')
+        available_qty = 0
+        required_qty = 0
+        if order.picking_ids:
+            for picking in order.picking_ids: 
+                for move in picking.move_lines:
+                    move_vals = {}
+                    cost_method = move.product_id.cost_method
+                    if cost_method in ['fifo', 'lifo']:
+                        if cost_method == 'fifo':
+                            order_by = 'date'
+                        elif cost_method == 'lifo':
+                            order_by = 'date desc'
+                        prod_lot_ids = lot_obj.search(cr, uid, [('product_id', '=', move.product_id.id)], order=order_by)
+                        prod_lots = lot_obj.browse(cr, uid, prod_lot_ids, context)
+                        for lot in prod_lots:
+                            available_qty += lot.stock_available
+#DS20121228 Modify logic to create delivery order when stock is not enough
+#                        if available_qty < move.product_qty:
+#                            raise osv.except_osv(_('User Error!'), _('Required stock is not available for this product in the Production Lots!'))
+                        move_qty = move.product_qty
+                        required_qty = move.product_qty
+                        lot_flag = False
+                        product_id = move.product_id.id
+                        for lot in  prod_lots:
+                            if required_qty <= 0:
+                                break
+                            lot_qty = lot.stock_available
+                            if lot_qty > 0 :
+                                if lot_qty < required_qty:
+                                    if move_qty == required_qty:
+                                        stock_move_obj.write(cr, uid, [move.id], {'prodlot_id':lot.id, 'product_qty':lot_qty}, context=context)
+                                        lot_flag = True
+                                    else:
+#DS20121228 Add variables: sale_line_id, uos and uos_qty variable to be passed when creating splitted line
+#                                       move_vals = {'picking_id':move.picking_id.id, 'name':move.product_id.name, 'product_id':product_id, 'state':move.state, 'prodlot_id':lot.id, 'product_qty':lot_qty, 'product_uom':move.product_uom.id, 'date':move.date, 'location_id':move.location_id.id, 'location_dest_id':move.location_dest_id.id, 'company_id':move.company_id.id}
+                                        move_vals = {
+                                            'name':move.product_id.name,
+                                            'picking_id':move.picking_id.id, 
+                                            'product_id':product_id,
+                                            'prodlot_id':lot.id,
+                                            'date':move.date,
+                                            'date_expected': move.date_expected,
+                                            'product_qty':lot_qty, 
+                                            'product_uom':move.product_uom.id,
+                                            'product_uos_qty': (move.product_uos and move.product_uos_qty) or move.product_qty,
+                                            'product_uos':((move.product_uos and move.product_uos.id) or move.product_uom.id), 
+                                            'product_packaging': move.product_packaging.id,
+                                            'address_id': move.address_id.id or move.picking_id.sale_id.partner_shipping_id.id,
+                                            'location_id':move.location_id.id, 
+                                            'location_dest_id':move.location_dest_id.id, 
+                                            'sale_line_id':move.sale_line_id.id,
+                                            'state':move.state, 
+                                            'note':move.note,
+                                            'company_id':move.company_id.id,}
+
+                                else:
+                                    if lot_flag:
+#DS20121228 Add variables: sale_line_id, uos and uos_qty variable to be passed when creating splitted line
+#                                       move_vals = {'picking_id':move.picking_id.id, 'name':move.product_id.name, 'prodlot_id':lot.id, 'product_id':product_id, 'state':move.state, 'product_qty':required_qty, 'product_uom':move.product_uom.id, 'date':move.date, 'location_id':move.location_id.id, 'location_dest_id':move.location_dest_id.id, 'company_id':move.company_id.id}
+                                        move_vals = {
+                                            'name':move.product_id.name,
+                                            'picking_id':move.picking_id.id, 
+                                            'product_id':product_id,
+                                            'prodlot_id':lot.id, 
+                                            'date':move.date,
+                                            'date_expected': move.date_expected,
+                                            'product_qty':required_qty,
+                                            'product_uom':move.product_uom.id,
+                                            'product_uos_qty': (move.product_uos and move.product_uos_qty) or move.product_qty,
+                                            'product_uos':((move.product_uos and move.product_uos.id) or move.product_uom.id), 
+                                            'product_packaging': move.product_packaging.id,
+                                            'address_id': move.address_id.id or move.picking_id.sale_id.partner_shipping_id.id,
+                                            'location_id':move.location_id.id, 
+                                            'location_dest_id':move.location_dest_id.id, 
+                                            'sale_line_id':move.sale_line_id.id,
+                                            'state':move.state, 
+                                            'note':move.note,
+                                            'company_id':move.company_id.id,}
+                                    else:                            
+                                        stock_move_obj.write(cr, uid, [move.id], {'prodlot_id':lot.id, 'product_qty':required_qty}, context=context)                                        
+                                if lot_flag and move_vals:
+                                    move_id = stock_move_obj.create(cr, uid, move_vals, context=context)
+                            if lot_qty > 0:
+                                required_qty -= lot_qty
+#DS20121228 Add new line without lot id when stock is not enough
+                        if required_qty > 0:
+                            if lot_flag:
+                                move_vals = {
+                                    'name':move.product_id.name, 
+                                    'picking_id':move.picking_id.id, 
+                                    'product_id':product_id, 
+                                    'date':move.date, 
+                                    'date_expected': move.date_expected,
+                                    'product_qty':required_qty, 
+                                    'product_uom':move.product_uom.id,
+                                    'product_uos_qty': (move.product_uos and move.product_uos_qty) or move.product_qty,
+                                    'product_uos': ((move.product_uos and move.product_uos.id) or move.product_uom.id), 
+                                    'product_packaging': move.product_packaging.id,
+                                    'address_id': move.address_id.id or move.picking_id.sale_id.partner_shipping_id.id,
+                                    'location_id':move.location_id.id, 
+                                    'location_dest_id':move.location_dest_id.id,
+                                    'sale_line_id':move.sale_line_id.id,
+                                    'state':move.state, 
+                                    'note':move.note, 
+                                    'company_id':move.company_id.id,}            
+                            if lot_flag and move_vals:
+                                move_id = stock_move_obj.create(cr, uid, move_vals, context=context)
+        return result
+
+sale_order()

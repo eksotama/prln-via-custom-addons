@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- Tax Group Parameters Category -->
+        <record id="tax_group_category" model="code.category">
+            <field name="name">Tax Group Category</field>
+            <field name="pinned">True</field>
+        </record>
+
+        <!-- Tax Groups for Indonesia -->
+        <record id="tax_group_tk" model="code.decode">
+            <field name="sequence" eval="1"/>
+            <field name="code">TK</field>
+            <field name="value">TK - Lajang</field>
+            <field name="category" ref="via_hr_payroll_enhancements.tax_group_category"/>
+            <field name="pinned" eval="False"/>
+        </record>
+
+        <record id="tax_group_k0" model="code.decode">
+            <field name="sequence" eval="2"/>
+            <field name="code">K0</field>
+            <field name="value">K0 - Menikah tanpa tanggungan</field>
+            <field name="category" ref="via_hr_payroll_enhancements.tax_group_category"/>
+            <field name="pinned" eval="False"/>
+        </record>
+
+        <record id="tax_group_k1" model="code.decode">
+            <field name="sequence" eval="3"/>
+            <field name="code">K1</field>
+            <field name="value">K1 - Menikah dengan 1 tanggungan</field>
+            <field name="category" ref="via_hr_payroll_enhancements.tax_group_category"/>
+            <field name="pinned" eval="False"/>
+        </record>
+
+        <record id="tax_group_k2" model="code.decode">
+            <field name="sequence" eval="3"/>
+            <field name="code">K2</field>
+            <field name="value">K2 - Menikah dengan 2 tanggungan</field>
+            <field name="category" ref="via_hr_payroll_enhancements.tax_group_category"/>
+            <field name="pinned" eval="False"/>
+        </record>
+
+        <record id="tax_group_k3" model="code.decode">
+            <field name="sequence" eval="4"/>
+            <field name="code">K3</field>
+            <field name="value">K3 - Menikah dengan 3 tanggungan</field>
+            <field name="category" ref="via_hr_payroll_enhancements.tax_group_category"/>
+            <field name="pinned" eval="False"/>
+        </record>
+    </data>
+</openerp>

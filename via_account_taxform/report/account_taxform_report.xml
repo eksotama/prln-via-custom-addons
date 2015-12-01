@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <report
+            id="report_taxform"
+            string="Print Taxform"
+            model="account.taxform"
+            name="account.taxform.report"
+            rml="via_account_taxform/report/account_taxform_report.rml"
+            auto="False"
+            header="False"
+            usage="default"/>
+
+        <report
+            id="report_taxform_one_page"
+            string="Print Single Taxform"
+            model="account.taxform"
+            name="account.taxform.report.one.page"
+            rml="via_account_taxform/report/account_taxform_report_one_page.rml"
+            auto="False"
+            header="False"
+            usage="default"/>
+
+        <report
+            id="report_taxform_preprinted"
+            string="Print Preprinted Taxform"
+            model="account.taxform"
+            name="account.taxform.report.preprinted"
+            rml="via_account_taxform/report/account_taxform_report_preprinted.rml"
+            auto="False"
+            header="False"
+            usage="default"/>
+    </data>
+</openerp>

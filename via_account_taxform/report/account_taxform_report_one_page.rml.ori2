@@ -1,0 +1,419 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+  <template pageSize="(612.0,792.0)" title="TaxForm" author="Ivan Wirawan" allowSplitting="20">
+    <pageTemplate id="first">
+      <frame id="first" x1="57.0" y1="67.0" width="498" height="698"/>
+      <frame id="pengusaha" name="pengusaha" x1="57.0" y1="0.0" width="498" height="712"/>
+      <frame id="pembeli" name="pembeli" x1="57.0" y1="0.0" width="498" height="632"/>
+      <frame id="line" x1="57.0" y1="0.0" width="498" height="550"/>
+      <frame id="total_line" x1="57.0" y1="0.0" width="498" height="278"/>
+      <frame id="ppnbm" x1="57.0" y1="0.0" width="498" height="146"/> 
+      <frame id="total_ppnbm" x1="57.0" y1="0.0" width="498" height="85"/>
+      <pageGraphics>
+      <!-- Main Table -->
+      <rect x="0.5 cm" y="1.1 cm" width="20.5 cm" height="24.5 cm" fill="no" stroke="yes"/>
+      <!-- Horizontal Lines -->
+      <lineMode width="0.5"/>
+      <lines>
+        0.5cm 24.84cm 21cm 24.84cm
+        0.5cm 24.24cm 21cm 24.24cm
+        0.5cm 21.94cm 21cm 21.94cm
+        0.5cm 21.34cm 21cm 21.34cm
+        0.5cm 19.34cm 21cm 19.34cm
+        0.5cm 18.24cm 21cm 18.24cm
+        0.5cm 9.64cm 21cm 9.64cm
+        0.5cm 8.74cm 21cm 8.74cm
+        0.5cm 7.94cm 21cm 7.94cm
+        0.5cm 7.09cm 21cm 7.09cm
+        0.5cm 6.24cm 21cm 6.24cm
+        0.5cm 5.34cm 21cm 5.34cm
+      </lines>
+      <!-- Vertical Lines -->
+      <lineMode width="0.5"/>
+      <lines>
+        1.7cm 9.6cm 1.7cm 19.3cm
+        15.4cm 5.3cm 15.4cm 19.3cm
+      </lines>
+      <!-- PPnBM Table -->
+      <rect x="0.8 cm" y="2.2 cm" width="11.3 cm" height="2.5 cm" fill="no" stroke="yes"/>
+      <!-- Horizontal Lines -->
+      <lineMode width="0.5"/>
+      <lines>
+        0.8cm 4.44cm 12.1cm 4.44cm
+        0.8cm 2.89cm 12.1cm 2.89cm
+      </lines>
+      <!-- Vertical Lines -->
+      <lineMode width="0.5"/>
+      <lines>
+        2.95cm 2.9cm 2.95cm 4.7cm
+        7.6cm 2.2cm 7.6cm 4.7cm
+      </lines>
+    </pageGraphics>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <blockTableStyle id="Standard_Outline">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table3">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table8">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table1">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table6">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table2">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table4">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table7">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+    <initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="P1" fontName="Helvetica" fontSize="2.0" leading="3" alignment="RIGHT"/>
+    <paraStyle name="P2" fontName="Helvetica-Bold" fontSize="8.0" leading="16" alignment="CENTER"/>
+    <paraStyle name="P3" fontName="Helvetica" fontSize="8.0" leading="8" alignment="JUSTIFY"/>
+    <paraStyle name="P4" fontName="Helvetica" fontSize="6.0" leading="5" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P5" fontName="Helvetica" fontSize="8.0" leading="8" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P6" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="8" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P7" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="8" alignment="JUSTIFY" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P8" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="8" alignment="JUSTIFY" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P9" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="8" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P10" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="2.0" leading="3" alignment="JUSTIFY" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P11" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="2.0" leading="3" alignment="JUSTIFY" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P12" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="8" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P13" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="8" alignment="JUSTIFY" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P14" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="8" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P15" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER"/>
+    <paraStyle name="P16" fontName="Helvetica" fontSize="8.0" leading="12" alignment="JUSTIFY"/>
+    <paraStyle name="P17" fontName="Helvetica-Bold" fontSize="8.0" leading="8" alignment="JUSTIFY"/>
+    <paraStyle name="P18" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER"/>
+    <paraStyle name="P19" fontName="Helvetica" fontSize="8.0" leading="8" alignment="JUSTIFY"/>
+    <paraStyle name="P20" fontName="Helvetica" fontSize="8.0" leading="8" alignment="RIGHT"/>
+    <paraStyle name="P21" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER"/>
+    <paraStyle name="PNoUrut" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER" leftIndent="10"/>
+    <paraStyle name="PNamaBarang" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER" leftIndent="100"/>
+    <paraStyle name="PHargaJual" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER" leftIndent="100"/>
+    <paraStyle name="PNamaBarangLine" fontName="Helvetica" fontSize="8.0" leading="8" alignment="LEFT" leftIndent="20" spaceBefore="9.0" />
+    <paraStyle name="PHargaJualLine" fontName="Helvetica" fontSize="8.0" leading="0" alignment="RIGHT" leftIndent="0.0"/>
+    <paraStyle name="PPPN" fontName="Helvetica" fontSize="8.0" leading="18" alignment="LEFT" leftIndent="0.0"/>
+    <paraStyle name="PPPnBm" fontName="Helvetica" fontSize="8.0" leading="12" alignment="LEFT" leftIndent="0.0"/>
+    <paraStyle name="PAmountTotalPPNBM" fontName="Helvetica" fontSize="8.0" leading="8" alignment="RIGHT" leftIndent="0.0"/>
+    <paraStyle name="PUserName" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER" leftIndent="70"/>    
+    <paraStyle name="PNama" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER" leftIndent="900"/>   
+    <paraStyle name="Header" fontName="Helvetica" fontSize="6.0" leading="6" alignment="RIGHT"/>
+    <paraStyle name="P22" fontName="Helvetica" fontSize="8.0" leading="8" alignment="JUSTIFY"/>
+    <paraStyle name="P23" fontName="Helvetica" fontSize="8.0" leading="18" alignment="JUSTIFY"/>
+    <paraStyle name="P24" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER"/>
+    <paraStyle name="P25" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER"/>
+    <paraStyle name="P26" fontName="Helvetica" fontSize="2.0" leading="3" alignment="RIGHT"/>
+    <paraStyle name="P27" fontName="Helvetica-Bold" fontSize="2.0" leading="3" alignment="JUSTIFY"/>
+    <paraStyle name="P28" rightIndent="0.0" leftIndent="-8.0" fontName="Helvetica-Bold" fontSize="8.0" leading="8" alignment="JUSTIFY"/>
+    <paraStyle name="P29" fontName="Helvetica" fontSize="8.0" leading="8" alignment="CENTER"/>
+    <paraStyle name="P30" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="2.0" leading="3" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="Standard" fontName="Helvetica"/>
+    <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Text body" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="List" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="Caption" fontName="Helvetica" fontSize="12.0" leading="15" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="Index" fontName="Helvetica"/>
+    <paraStyle name="Table Contents" fontName="Helvetica"/>
+    <paraStyle name="Header" fontName="Helvetica"/>
+    <paraStyle name="terp_header" fontName="Helvetica-Bold" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="10" spaceAfter="6.0"/>
+    <paraStyle name="terp_default_8" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="8" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="Table Heading" fontName="Helvetica" alignment="CENTER"/>
+    <paraStyle name="terp_default_9" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_Right_8" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="8" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_Right_9" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <images/>
+  </stylesheet>
+  <story>
+    <illustration width="90" height="20">
+        <setFont name="Helvetica" size="6"/>
+        <fill color="white"/>
+        <stroke color="white"/>    
+        <drawRightString x="18.5cm" y="6">Lembar ke-1 : Untuk Pembeli BKP/Penerima JKP</drawRightString>
+        <drawRightString x="18.05cm" y="0">Sebagai bukti Pajak Masukan</drawRightString>
+    </illustration>    
+    <para style="P30">
+        [[repeatIn(objects,'o')]]
+        [[ setLang(o.company_id and o.company_id.partner_id and o.company_id.partner_id.lang or "en_US") ]]
+    </para>
+    <para style="P2">[[ (o.invoice_id.type == 'in_refund') and 'NOTA RETUR' or 'FAKTUR PAJAK' ]]</para>
+    <blockTable colWidths="216.0,9.0,347.0" style="Table3">
+        <tr>
+            <td>
+              <para style="P16">Kode dan Nomor Seri [[ (o.invoice_id.type == 'in_refund') and 'Nota Retur' or 'Faktur Pajak' ]]</para>
+            </td>
+            <td>
+              <para style="P15">:</para>
+            </td>
+            <td>
+              <para style="P12">[[o.trx_code]].[[o.branch_code]]-13.[[o.taxform_id ]]</para>
+            </td>
+        </tr>
+    </blockTable>
+    <setNextFrame name="pengusaha"/>
+    <nextFrame/>
+    <blockTable colWidths="216.0,9.0,347.0" style="Table3">
+        <tr>
+            <td>
+              <para style="P17">Pengusaha Kena Pajak</para>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <para style="P19">Nama</para>
+            </td>
+            <td>
+              <para style="P18">:</para>
+            </td>
+            <td>
+              <para style="P14">[[ (o.company_id and o.company_id.partner_id and ((o.company_id.partner_id.title and (o.company_id.partner_id.title.name and ' ') or '') + o.company_id.partner_id.name)) or '' ]]</para>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <para style="P19">Alamat</para>
+            </td>
+            <td>
+              <para style="P18">:</para>
+            </td>
+            <td>
+              <para style="P14">[[ (o.company_address_id and o.company_address_id.street) or '' ]] [[ (o.company_address_id and o.company_address_id.street2) or '' ]]</para>
+              <para style="P14">[[ (o.company_address_id and o.company_address_id.zip) or '' ]] [[ (o.company_address_id and o.company_address_id.city) or '' ]] [[ (o.company_address_id and o.company_address_id.state_id and o.company_address_id.state_id.name) or '' ]]</para>
+            </td>
+        </tr>
+        <tr>
+        <td>
+          <para style="P19">NPWP</para>
+        </td>
+        <td>
+          <para style="P18">:</para>
+        </td>
+        <td>
+          <para style="P13">[[ (o.company_id and o.company_id.vat) or '' ]] </para>
+        </td>
+        </tr>
+    </blockTable>
+    <setNextFrame name="pembeli"/>
+    <nextFrame/>
+    <blockTable colWidths="216.0,9.0,347.0" style="Table3">
+        <tr>
+        <td>
+          <blockTable colWidths="431.0" style="Table8">
+            <tr>
+              <td>
+                <para style="P28">Pembeli Barang Kena Pajak / Penerima Jasa Kena Pajak</para>
+              </td>
+            </tr>
+          </blockTable>
+        </td>
+        </tr>
+        <tr>
+        <td>
+          <para style="P19">Nama</para>
+        </td>
+        <td>
+          <para style="P18">:</para>
+        </td>
+        <td>
+          <para style="P14">[[ (o.partner_id and ((o.partner_id.title and (o.partner_id.title.name + ' ') or '') + o.partner_id.name)) or '' ]]</para>
+        </td>
+        </tr>
+        <tr>
+        <td>
+          <para style="P19">Alamat</para>
+        </td>
+        <td>
+          <para style="P18">:</para>
+        </td>
+        <td>
+          <para style="P14">[[ (o.partner_address_id and o.partner_address_id.street) or '' ]] [[ (o.partner_address_id and o.partner_address_id.street2) or '' ]]</para>
+          <para style="P14">[[ (o.partner_address_id and o.partner_address_id.zip) or '' ]] [[ (o.partner_address_id and o.partner_address_id.city) or '' ]] [[ (o.partner_address_id and o.partner_address_id.state_id and o.company_address_id.state_id.name) or '' ]]</para>
+        </td>
+        </tr>
+        <tr>
+        <td>
+          <para style="P19">NPWP</para>
+        </td>
+        <td>
+          <para style="P18">:</para>
+        </td>
+        <td>
+          <para style="P13">[[ o.partner_npwp.value ]]</para>
+        </td>
+        </tr>
+    </blockTable>   
+    <setNextFrame name="line"/> 
+    <nextFrame/>
+    <blockTable colWidths="10.0,311.0,250.0" style="Table1">
+        <tr>
+            <td><para style="PNoUrut">No. Urut</para></td>              
+            <td><para style="PNamaBarang">Nama Barang Kena Pajak / Jasa Kena Pajak</para></td>
+            <td><para style="PHargaJual">Harga Jual/Penggantian/Uang Muka/Termin (Rp)</para></td>
+        </tr>
+        <tr>
+            <td>
+                <para style="P11">[[ repeatIn(o.taxform_line,'t') ]]</para>
+                <blockTable colWidths="10.0,311.0,100.0,50.0,100.0" style="Table4" rowHeights="3">
+                    <tr>
+                        <td>
+                            <para style="PNoUrut" leftIndent="0.0" bulletIndent="0" leading="1">
+                                <bullet size="8.0"><seq id="L1"/></bullet>
+                            </para>                     
+                        </td>
+                        <td><para style="PNamaBarangLine">[[ t.name ]]</para></td>
+                        <td><para style="PNamaBarangLine">[[ formatLang(t.quantity) ]] [[ t.uom ]]</para></td>
+                        <td><para style="PHargaJualLine">[[ formatLang(get_unit_price(t.price_subtotal, t.discount, t.quantity))]] </para></td>
+                        <td><para style="PHargaJualLine">[[ formatLang(get_subtotal(t.price_subtotal, t.discount ))]] 
+                        </para></td>
+                    </tr>
+                </blockTable>
+            </td>
+        </tr>
+        <tr>
+            <td><para style="P22">
+                  <font color="white"> </font>
+                </para>
+            </td>
+        </tr>
+    </blockTable>
+    <para>
+      <seqReset id="L1"/>
+    </para>
+    <setNextFrame name="total_line"/>
+    <nextFrame/>
+    <blockTable colWidths="361.0,210.0" style="Table2">
+      <tr>
+        <td>
+          <para style="P23">Harga Jual/Penggantian/Uang Muka/Termin</para>
+        </td>
+        <td>
+          <para style="P9">[[ formatLang(sum_subtotal(o.taxform_line)) ]] </para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P23">Dikurangi Potongan Harga</para>
+        </td>
+        <td>
+          <para style="P9">[[ formatLang(sum_discount(o.taxform_line)) ]] </para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P23">Dikurangi Uang Muka yang telah diterima</para>
+        </td>
+        <td>
+          <para style="P9">[[ formatLang(abs(round_currency(o.invoice_id.currency_id, o.amount_advance_payment)))]]</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="P23">Dasar Pengenaan Pajak</para>
+        </td>
+        <td>
+          <para style="P9"> [[formatLang(get_base(o.taxform_line) - abs(o.amount_advance_payment))]]
+          </para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="PPPN">PPN= 10% x Dasar Pengenaan Pajak</para>
+        </td>
+        <td>
+          <para style="P9">[[ formatLang(get_ppn(o.taxform_line, o.amount_advance_payment))]]</para>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <para style="PPPnBm">Pajak Penjualan Atas Barang Mewah</para>
+        </td>
+      </tr>
+    </blockTable> 
+    <setNextFrame name="ppnbm"/>
+    <nextFrame/>
+    <blockTable colWidths="361.0,210.0" style="Table2">
+        <tr>
+            <td>
+                <blockTable colWidths="50.0,96.0,250.0" style="Table4">
+                    <tr>
+                        <td><para style="P4">Tarif</para></td>
+                        <td><para style="P4">DPP</para></td>
+                        <td><para style="P4">PPn BM</para></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <para style="P11">[[ repeatIn(o.taxform_ppnbm,'p') ]]</para>
+                            <blockTable colWidths="50.0,96.0,250.0" style="Table4">
+                                <tr>
+                                    <td><para style="P4">[[ locale.format('%.2f', p.tariff * 100, True) ]]%</para></td>
+                                    <td><para style="P4">Rp. [[ formatLang(p.tax_base) ]]</para></td>
+                                    <td><para style="P4">Rp. [[ formatLang(p.amount_tax) ]] </para></td>                                
+                                </tr>
+                            </blockTable>
+                        </td>
+                    </tr>
+                </blockTable>
+            </td>
+            <td>
+                <blockTable colWidths="205.0" style="Table7">
+                    <tr>
+                        <td><para style="P21">[[ o.company_address_id and o.company_address_id.city]], [[o.invoice_date]]</para></td>
+                    </tr>
+                </blockTable>
+            </td>
+        </tr>
+    </blockTable>
+    <setNextFrame name="total_ppnbm"/>
+    <nextFrame/>
+    <blockTable colWidths="50.0,260.0,260.0" style="Table7">
+        <tr>
+            <td><para style="P4">Jumlah</para></td>
+            <td><para style="PAmountTotalPPNBM">[[ formatLang(o.amount_total_ppnbm) ]]</para></td>
+            <td><para style="PUserName">[[ o.user_name ]]</para></td>
+        </tr>
+        <!--tr>
+            <td><para style="PNama">Nama</para></td>
+        </tr-->
+    </blockTable>
+    <illustration>
+        <lines>
+          0.2cm 7.6cm 5.0cm 7.6cm
+          [[ o.trx_type&lt;&gt;'hargajual' and removeParentNode('lines') ]]
+        </lines>
+        <lines>
+          -1.6cm 7.6cm 0.1cm 7.6cm
+          2.1cm 7.6cm 5.0cm 7.6cm
+          [[ o.trx_type&lt;&gt;'penggantian' and removeParentNode('lines') ]]
+        </lines>
+        <lines>
+          -1.6cm 7.6cm 2.0cm 7.6cm
+          3.9cm 7.6cm 5.0cm 7.6cm
+          [[ o.trx_type&lt;&gt;'uangmuka' and removeParentNode('lines') ]]
+        </lines>
+        <lines>
+          -1.6cm 7.6cm 3.8cm 7.6cm
+          [[ o.trx_type&lt;&gt;'termin' and removeParentNode('lines') ]]
+        </lines>
+    </illustration>
+  </story>
+</document>

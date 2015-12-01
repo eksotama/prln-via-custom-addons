@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data noupdate="1">
+        <!-- Sequences for Product Transformation -->
+        <record id="seq_type_product_transformation"
+            model="ir.sequence.type">
+            <field name="name">Product Transformation Sequence</field>
+            <field name="code">product.transformation</field>
+        </record>
+
+        <record id="seq_product_trans" model="ir.sequence">
+            <field name="name">Product Transformation</field>
+            <field name="code">product.transformation</field>
+            <field name="prefix">C/%(year)s/%(month)s/</field>
+            <field name="padding" eval="5"/>
+        </record>
+    </data>
+</openerp>

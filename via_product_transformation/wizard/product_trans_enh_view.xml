@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_prod_trans_wizard" model="ir.ui.view">
+            <field name="name">Process</field>
+            <field name="model">product.transformations.wizard</field>
+            <field name="type">form</field>
+            <field name="priority">100</field>
+            <field name="arch" type="xml">
+                <form string="Process">
+                    <label string="" colspan="6"/>
+                    <button special="cancel" string="Cancel" icon="gtk-cancel"/>
+                    <button name="process"
+                            string="Consume" type="object" icon="gtk-convert"
+                            groups="via_product_transformation.group_transformation_consumption,via_product_transformation.group_transformation_production,via_product_transformation.group_transformation_manager"
+                            invisible="context.get('process') not in ['consume']"
+                            context="{'process': context.get('process')}"/>
+
+                    <button name="process"
+                            string="Ready" type="object" icon="gtk-apply"
+                            groups="via_product_transformation.group_transformation_consumption,via_product_transformation.group_transformation_production,via_product_transformation.group_transformation_manager"
+                            invisible="context.get('process') not in ['ready']"
+                            context="{'process': context.get('process')}"/>
+
+                    <button name="process"
+                            string="Finish" type="object" icon="gtk-quit"
+                            groups="via_product_transformation.group_transformation_consumption,via_product_transformation.group_transformation_production,via_product_transformation.group_transformation_manager"
+                            invisible="context.get('process') not in ['done']"
+                            context="{'process': context.get('process')}"/>
+               </form>
+            </field>
+        </record>
+
+        <act_window id="action_prod_trans_consume"
+            multi="True"
+            key2="client_action_multi" name="Consume"
+            res_model="product.transformations.wizard" src_model="product.transformation"
+            view_mode="form" target="new" view_type="form"
+            view_id= "view_prod_trans_wizard"
+            context= "{'process': 'consume'}"/>
+
+        <act_window id="action_prod_trans_ready"
+            multi="True"
+            key2="client_action_multi" name="Ready"
+            res_model="product.transformations.wizard" src_model="product.transformation"
+            view_mode="form" target="new" view_type="form"
+            view_id= "view_prod_trans_wizard"
+            context= "{'process': 'ready'}"/>
+
+        <act_window id="action_prod_trans_done"
+            multi="True"
+            key2="client_action_multi" name="Finish"
+            res_model="product.transformations.wizard" src_model="product.transformation"
+            view_mode="form" target="new" view_type="form"
+            view_id= "view_prod_trans_wizard"
+            context= "{'process': 'done'}"/>
+    </data>
+</openerp>

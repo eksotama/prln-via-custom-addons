@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf8"?>
+<openerp>
+    <data>
+            <!-- Inherited Company's view to add Valuation Journal -->
+            <record model="ir.ui.view" id="view_company_valuation_journal_inherit_form">
+                <field name="name">res.company.form.valuation.journal.inherit</field>
+                <field name="inherit_id" ref="account.view_company_inherit_1_form"/>
+                <field name="model">res.company</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                    <field name="paypal_account" position="after">
+                          <field name="valuation_journal_id"/>
+                    </field>
+                </field>
+            </record>
+    </data>
+</openerp>

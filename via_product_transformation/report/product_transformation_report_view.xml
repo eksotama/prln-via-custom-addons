@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="search_report_product_transformation" model="ir.ui.view">
+            <field name="name">report.product.transformation.search</field>
+            <field name="model">report.product.transformation</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Product Transformation Analysis">
+                    <filter name="consumed" string="Consumed" domain="[('state', '=','consumption')]" help="Consumed" icon="terp-stock_symbol-selection"/>
+                    <filter name="ready" string="Ready" domain="[('state', '=','ready')]" help="Ready" icon="terp-camera_test"/>
+                    <filter name="done" string="Finished" domain="[('state', '=','done')]" help="Finished" icon="terp-accessories-archiver+"/>
+                    <separator orientation="vertical"/>
+                    <field name="c_product_id"/>
+                    <field name="c_prod_lot_id"/>
+                    <field name="f_product_id"/>
+                    <field name="f_prod_lot_id"/>
+                    <newline />
+                    <group expand="0" string="Group By...">
+                        <filter name="name" string="Transformation" context="{'group_by' : 'name'}" icon="terp-accessories-archiver"/>
+                        <filter name="state" string="state" context="{'group_by' : 'state'}" icon="terp-stock_effects-object-colorize"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_report_product_transformation" model="ir.ui.view">
+            <field name="name">report.product.transformation.tree</field>
+            <field name="model">report.product.transformation</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Product Transformation Analysis">
+                    <field name="name"/>
+                    <field name="c_product_id"/>
+                    <field name="c_uom_id"/>
+                    <field name="c_product_qty"/>
+                    <field name="c_prod_lot_id"/>
+                    <field name="f_product_id"/>
+                    <field name="f_uom_id"/>
+                    <field name="f_product_qty"/>
+                    <field name="f_prod_lot_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+       <record id="action_report_product_transformation" model="ir.actions.act_window">
+            <field name="name">Product Transformation Analysis</field>
+            <field name="res_model">report.product.transformation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <menuitem id = "menu_report_product_transformation"
+            action="action_report_product_transformation"
+            parent="transformation_main_menu" />
+    </data>
+</openerp>

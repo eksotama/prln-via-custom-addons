@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="via_prorate_discount_view" model="ir.ui.view">
+            <field name="name">Prorate Discount</field>
+            <field name="model">via.prorate.discount</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+            <form string="Prorate Discount">
+                <field name="discount_type"/>
+                <field name="discount_amount"/>
+                <group col="4" colspan="4">
+                    <button icon="gtk-cancel" special="cancel" string="Cancel" type="object" default_focus="1"/>
+                    <button icon="gtk-execute" name="do_apply_discount" string="Prorate" type="object"/>
+                </group>
+            </form>
+            </field>
+        </record>
+
+        <act_window name="Prorate Discount"
+                res_model="via.prorate.discount"
+                src_model="purchase.order"
+                view_mode="form"
+                target="new"
+                id="via_prorate_discount_action"/>
+    </data>
+</openerp>
+

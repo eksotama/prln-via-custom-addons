@@ -1,0 +1,131 @@
+============================================================================================================================
+ Version Change Log (via_product_transformation)
+============================================================================================================================
+
+1.01  --> October 04,2012 : Anil
+    * created module Product Transformation for  inifinity.
+    * created workflow for product_transformation.
+    * move the the Product Transformation's views ,and object from via_lot_product to
+      this via_product_transformation module.
+    * added finished goods object fields and description fields.
+
+1.02  --> October 05,2012 : Anup
+    * Updated the workflow as per requirement.
+
+1.03  --> October 08,2012 : Anup
+    * Developed the complete form for transformation and made some changes in the existing view.
+
+1.04  --> October 15,2012 : Anup
+    * Added domain on all location in transformation view to search locations which are not of view type.
+
+1.05  --> October 20,2012 : Anup
+    * Added the fields in product transformation and improved the view, fields now being displayed as per need.
+    * Added an on_change on the product to get the UoM
+    * Again improved the view to have some fields displayed in the proper state and based on some conditions of the parent record
+
+1.06  --> October 23, 2012 : Anup
+    * Improved the view to have some fields behaving as per requirement
+    * Developed Product Transformation Template model and view
+    * Added workflow for Product Transformation Template
+    * Added groups for Product Transformation Template
+
+ 1.07  --> October 24,2012 : Anup
+    * Improved the field names for many2one, updated in the view for the same for product transformation.
+    * Improved the on_change method for products and _defaults in product transformation
+    * Added on_change product and defaults in product transformation template
+    * Fixed the issues with Groups in security file
+    * Added a wizard to create transformations from the template
+
+1.08  --> October 26,2012 : Anup
+    * Developed the consume feature that sends the current products to consume to consumed products,makes the consume button disable, Improved the transformation workflow, fixed the typo in transformation template workflow
+
+1.09  --> October 29,2012 : Naitik
+    * Give the Access Rights to all buttons and create ir.model.csv file.
+    * Create a record rule and override the unlink method.
+
+1.10  --> October 29,2012 : Naitik
+    * Check all things and give access rights on fields in product trasform.
+
+1.11 --> October 31, 2012 : Kalpana
+    * Updated total_cost functional field, overridden create(), write(), unlink() and
+    created onchange_cost_account() to make calculation of Material Usage %, Cost Amount.
+
+1.12  --> October 31, 2012 : Naitik
+    * Add trans_done() method which is create a stock moves and change in trans_consume() method which is also
+    create a stock moves.
+
+1.13  --> October 31, 2012 : Naitik
+    * Apply the icon to all the buttons.
+
+1.14  --> November 1, 2012  : Anil
+    * Fixed the issue of Either location precendence in products to consume and finished goods in product transformation and template.
+    * Created Wizard Which creates product to consume lines
+
+      --> November 2, 2012  : Anil
+    * Improved the wizard based on the product costing method.
+
+1.15  --> November 3,2012 : Anil
+    * Set default company of logged in User in product tranformation.
+
+1.16  -> November 03,2012 : Kalpana
+    * Created a Product Transformation Postgresql view.
+
+1.17 --> November 03,2012 : Kalpana
+    * Improved onchange of finished goods line
+
+1.18 -->November 05,2012 : Anup
+    * Optimized the stock move creation logic and refactored the code
+    * Improved the code for create method in finished goods line
+
+1.19 --> November 10,2012 : Naitik
+    * Give access right to Finish Goods Tab and pass context in product lot field to get product default when create a product lot.
+
+1.20 --> November 10,2012 : Anup
+    * Passing context in action of template was blocking template to be opened in webclient, so fixed the issue.
+
+1.21 --> November 10,2012 : Naitik
+    * Devide the cost amount by finish line quantity.
+
+1.22 --> November 10,2012 : Anup
+    * Typo Fixed
+
+1.23 --> November 20,2012 : Anil
+
+    * created two wizards for update consume line in product transfomation.
+    * create name_get method in product_consume_line.
+
+1.24 --> November 26,2012 : Anil
+
+    * Added Button in update wizard for removing specific consume line.
+    * Modify the update wizard method & optimize code.
+    * Fixed, adding 0 value productlot consumeline.
+
+ 1.25 --> December 7,2012 : Anup
+    * The stockmoves created from transformation are now going to done state when consuming and finishing the products
+
+ 1.26 --> December 8,2012 : Anup
+    * Changed the picking type of the moves created from finished goods to incoming to update quantity available in the production lot
+
+1.27 --> December 13,2012 : Anup
+    * Added constraints for checking total_cost=total_cost of the finished goods and material usage equal to 100
+    * Added on_change methods on cost_amount and material_usage to change vice versa
+    * Improved the on_change method for product_qty to change the relevant cost_amount and material_usage_per
+    * Improved the overridden write method to calculate all the values effectively
+
+1.28 --> December 14,2012 : Anup
+    * Updated the write() method and also updated the constraint methods to comply with the rounding issue of total cost and total material usage percentage
+
+1.29 --> December 19,2012 : Anup
+    * Added a field transformation template in the transformation for reference during the calculation of the finished goods line
+    * Made modifications in the existing code to cover the transformation template issues
+    * Fixed the location issue when transformation was being created from template
+
+1.30 --> December 20,2013 : Reynaldi, Ivan Wirawan
+    * Added a mass processing capability for Product Transformation
+    * Clean-up code for better reading
+
+1.31 --> Mar, 2014 : Vikasa Infinity Anugrah, PT
+    * Prevent product type service from being used in product transformation
+    * Add link/mapping between Stock Moves and its Account Moves
+    * Add link/mapping between Product Transformation and its Stock Moves.
+    * Improvements on code maintainability

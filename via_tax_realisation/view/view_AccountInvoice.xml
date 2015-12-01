@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- SUPPLIER INVOICE -->
+        <record id="form_vatRealisation_supplierForm" model="ir.ui.view">
+            <field name="name">VIA Tax Realisation: Supplier Invoice Form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="via_account_taxform.account_taxform_supplier_invoice_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Taxform" position="attributes">
+                    <attribute name="string">Tax &amp; Realisation</attribute>
+                </page>
+                <xpath expr="/form/notebook/page/field[@name='invoice_taxform_ids']/tree/field[@name='amount']" position="after">
+                    <field name="realise_move_id" readonly="1"/>
+                    <button name="view_realisation_entry"
+                        type="object" string="View Realisation Entry"
+                        icon="terp-stock_zoom"
+                        attrs="{'invisible': [('realise_move_id', '=', False)]}"/>
+                </xpath>
+                <xpath expr="/form/notebook/page/field[@name='invoice_taxform_ids']/tree/button[@string='Create Taxform']" position="replace">
+                    <button string="Realise"
+                        name="%(waction_account_wizardTaxRealisation)d"
+                        type="action"
+                        icon="gtk-execute"
+                        attrs="{'invisible': ['|', ('realise_move_id', '!=', False), ('invoice_state', 'not in', ('open', 'paid'))]}"/>
+                    <button string="Create Taxform"
+                        name="%(waction_account_wizardCreateTaxformRealisation)d"
+                        type="action"
+                        icon="gtk-new"
+                        attrs="{'invisible': ['|', '|', ('taxform_id', '!=', False), ('invoice_state', 'not in', ('open', 'paid')), ('invoice_type', 'in', ('out_refund', 'in_invoice'))]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- CUSTOMER INVOICE -->
+        <record id="form_vatRealisation_customerForm" model="ir.ui.view">
+            <field name="name">VIA Tax Realisation: Customer Invoice Form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="via_account_taxform.account_taxform_customer_invoice_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <page string="Taxform" position="attributes">
+                    <attribute name="string">Tax &amp; Realisation</attribute>
+                </page>
+                <xpath expr="/form/notebook/page/field[@name='invoice_taxform_ids']/tree/field[@name='amount']" position="after">
+                    <field name="realise_move_id" readonly="1"/>
+                    <button name="view_realisation_entry"
+                        type="object" string="View Realisation Entry"
+                        icon="terp-stock_zoom"
+                        attrs="{'invisible': [('realise_move_id', '=', False)]}"/>
+                </xpath>
+                <xpath expr="/form/notebook/page/field[@name='invoice_taxform_ids']/tree/button[@string='Create Taxform']" position="replace">
+                    <button string="Realise"
+                        name="%(waction_account_wizardTaxRealisation)d"
+                        type="action"
+                        icon="gtk-execute"
+                        attrs="{'invisible': ['|', ('realise_move_id', '!=', False), ('invoice_state', 'not in', ('open', 'paid'))]}"/>
+                    <button string="Create Taxform"
+                        name="%(waction_account_wizardCreateTaxformRealisation)d"
+                        type="action"
+                        icon="gtk-new"
+                        attrs="{'invisible': ['|', '|', ('taxform_id', '!=', False), ('invoice_state', 'not in', ('open', 'paid')), ('invoice_type', 'in', ('out_refund', 'in_invoice'))]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

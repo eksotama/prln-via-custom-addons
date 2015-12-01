@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Product Transformatuion Work Flow-->
+        <record id="wkf_prod_transformation" model="workflow">
+            <field name="name">Product Transformation Workflow</field>
+            <field name="osv">product.transformation</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <!-- Product Transformatuion Work Flow Activities -->
+        <record id="act_trans_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_prod_transformation"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+            <field name="action">write({'state':'draft'})</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act_trans_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_prod_transformation"/>
+            <field name="name">cancel</field>
+            <field name="action">write({'state':'cancel'})</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act_trans_consume" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_prod_transformation"/>
+            <field name="name">consumption</field>
+            <field name="action">trans_consume()</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act_trans_ready" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_prod_transformation"/>
+            <field name="name">ready</field>
+            <field name="action">trans_ready()</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act_trans_done" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_prod_transformation"/>
+            <field name="name">done</field>
+            <field name="action">trans_done()</field>
+            <field name="kind">function</field>
+            <field name="flow_stop">True</field>
+        </record>
+
+        <!-- Work Flow Transformation -->
+        <record id="trans_t1" model="workflow.transition">
+            <field name="act_from" ref="act_trans_draft"/>
+            <field name="act_to" ref="act_trans_cancel"/>
+            <field name="signal">action_draft_cancel</field>
+        </record>
+
+        <record id="trans_t2" model="workflow.transition">
+            <field name="act_from" ref="act_trans_cancel"/>
+            <field name="act_to" ref="act_trans_draft"/>
+            <field name="signal">action_cancel_draft</field>
+        </record>
+
+        <record id="trans_t3" model="workflow.transition">
+            <field name="act_from" ref="act_trans_draft"/>
+            <field name="act_to" ref="act_trans_consume"/>
+            <field name="signal">action_consume</field>
+        </record>
+
+        <record id="trans_t4" model="workflow.transition">
+            <field name="act_from" ref="act_trans_consume"/>
+            <field name="act_to" ref="act_trans_consume"/>
+            <field name="signal">action_consume</field>
+        </record>
+
+       <record id="trans_t5" model="workflow.transition">
+            <field name="act_from" ref="act_trans_consume"/>
+            <field name="act_to" ref="act_trans_ready"/>
+            <field name="signal">action_ready</field>
+        </record>
+
+        <record id="trans_t6" model="workflow.transition">
+            <field name="act_from" ref="act_trans_ready"/>
+            <field name="act_to" ref="act_trans_done"/>
+            <field name="signal">action_done</field>
+        </record>
+    </data>
+</openerp>

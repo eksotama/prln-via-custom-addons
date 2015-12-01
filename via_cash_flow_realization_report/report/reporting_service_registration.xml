@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <!-- VIA Cash Flow Realization Report -->
+    <record id="via_cash_flow_realization"
+	    model="ir.actions.report.xml">
+      <field name="name">VIA Cash Flow</field>
+      <field name="report_name">via_cash_flow_pdf</field>
+      <field name="report_type">pdf</field>
+      <field name="jasper_output">pdf</field>
+      <field name="model">account.account</field>
+
+      <field name="type">ir.actions.report.xml</field>
+      <field name="auto" eval="True"/>
+      <field name="header" eval="True"/>
+      <field name="report_file">via_cash_flow_realization_report/report/cash_flow_realization.jrxml</field>
+      <field name="report_rml">via_cash_flow_realization_report/report/cash_flow_realization.jrxml</field>
+      <!-- If set to true, the action will not be displayed on the right
+           toolbar of a form view. -->
+      <field name="multi" eval="True"/>
+      <field name="attachment_use" eval="False"/>
+      <field name="jasper_report" eval="True"/>
+    </record>
+    <!-- END: VIA Cash Flow Realization Report -->
+
+    <!-- VIA Cash Flow Realization Report Pageless -->
+    <record id="via_cash_flow_realization_pageless"
+	    model="ir.actions.report.xml">
+      <field name="name">VIA Cash Flow</field>
+      <field name="report_name">via_cash_flow_pageless_xls</field>
+      <field name="report_type">xls</field>
+      <field name="jasper_output">xls</field>
+      <field name="model">account.account</field>
+
+      <field name="type">ir.actions.report.xml</field>
+      <field name="auto" eval="True"/>
+      <field name="header" eval="True"/>
+      <field name="report_file">via_cash_flow_realization_report/report/cash_flow_realization_pageless.jrxml</field>
+      <field name="report_rml">via_cash_flow_realization_report/report/cash_flow_realization_pageless.jrxml</field>
+      <!-- If set to true, the action will not be displayed on the right
+           toolbar of a form view. -->
+      <field name="multi" eval="True"/>
+      <field name="attachment_use" eval="False"/>
+      <field name="jasper_report" eval="True"/>
+    </record>
+
+    <record id="via_cash_flow_realization_pageless_csv"
+	    model="ir.actions.report.xml">
+      <field name="name">VIA Cash Flow</field>
+      <field name="report_name">via_cash_flow_pageless_csv</field>
+      <field name="report_type">csv</field>
+      <field name="jasper_output">csv</field>
+      <field name="model">account.account</field>
+
+      <field name="type">ir.actions.report.xml</field>
+      <field name="auto" eval="True"/>
+      <field name="header" eval="True"/>
+      <field name="report_file">via_cash_flow_realization_report/report/cash_flow_realization_pageless.jrxml</field>
+      <field name="report_rml">via_cash_flow_realization_report/report/cash_flow_realization_pageless.jrxml</field>
+      <!-- If set to true, the action will not be displayed on the right
+           toolbar of a form view. -->
+      <field name="multi" eval="True"/>
+      <field name="attachment_use" eval="False"/>
+      <field name="jasper_report" eval="True"/>
+    </record>
+    <!-- END: VIA Cash Flow Realization Report Pageless -->
+  </data>
+</openerp>

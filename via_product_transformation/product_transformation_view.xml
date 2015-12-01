@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Product Transformation Search View -->
+        <record model="ir.ui.view"
+            id="product_transformation_search_view">
+            <field name="name">product.transformation.search</field>
+            <field name="model">product.transformation</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Product Transformation">
+                    <filter domain="[('state','=','draft')]"
+                        string="Draft" icon="terp-document-new" />
+                    <filter
+                        domain="[('state','in',('consumption','ready'))]"
+                        string="In Progress" icon="terp-check" />
+                    <filter domain="[('state','=','done')]"
+                        string="Finished" icon="terp-dialog-close" />
+                    <separator orientation="vertical" />
+                    <field name="name" />
+                    <field name="date" />
+                    <field name="responsible_id" />
+                    <field name="stock_journal_id" />
+                    <newline />
+                    <group expand="0" string="Extended Filters...">
+                        <field name="reference" />
+                        <field name="trans_loc_id" />
+                        <field name="raw_src_loc_id" />
+                        <field name="finish_goods_loc_id" />
+                    </group>
+                    <newline />
+                    <group expand="0" string="Group By...">
+                        <filter domain="[]" string="Responsible"
+                            context="{'group_by':'responsible_id'}" icon="terp-personal" />
+                        <filter domain="[]" string="Date"
+                            context="{'group_by':'date'}" icon="terp-go-month" />
+                        <filter domain="[]" string="State"
+                            context="{'group_by':'state'}"
+                            icon="terp-stock_effects-object-colorize" />
+                        <filter domain="[]" string="Stock Journal"
+                            context="{'group_by':'stock_journal_id'}"
+                            icon="terp-folder-orange" />
+                        <filter domain="[]" string="Trans Location"
+                            context="{'group_by':'trans_loc_id'}"
+                            help="Transformation Location" />
+                        <filter domain="[]" string="Raw Location"
+                            context="{'group_by':'raw_src_loc_id'}"
+                            help="Raw Material Source Location" />
+                        <filter domain="[]" string="Finished Location"
+                            context="{'group_by':'finish_goods_loc_id'}"
+                            help="Finished Goods Storage Location" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Product Transformation Tree View -->
+        <record model="ir.ui.view"
+            id="product_transformation_tree_view">
+            <field name="name">product.transformation.tree</field>
+            <field name="model">product.transformation</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Product Transformation">
+                    <field name="name" />
+                    <field name="date" />
+                    <field name="reference" />
+                    <field name="trans_loc_id" />
+                    <field name="stock_journal_id" />
+                    <field name="raw_src_loc_id" />
+                    <field name="finish_goods_loc_id" />
+                    <field name="responsible_id" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- Product Transformation Form View -->
+        <record model="ir.ui.view"
+            id="product_transformation_form_view">
+            <field name="name">product.transformation.form</field>
+            <field name="model">product.transformation</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Product Transformation">
+                    <group colspan="4" col="6">
+                        <field name="name"
+                            attrs="{ 'readonly':[('state', '!=', 'draft')]}"/>
+                        <field name="date"
+                            attrs="{ 'readonly':[('state', '!=', 'draft')]}"/>
+                        <field name="reference"
+                            attrs="{ 'readonly':[('state', 'not in', ('draft', 'consumption'))]}"/>
+                    </group>
+                    <group colspan="4">
+                        <field name="trans_loc_id"
+                            attrs="{ 'readonly':[('state', '!=', 'draft')]}"
+                            domain="[('usage','=','production')]"/>
+                        <field name="stock_journal_id"
+                            attrs="{ 'readonly':[('state', '!=', 'draft')]}"/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Consumption">
+                            <group colspan="4">
+                                <field name="raw_src_loc_id"
+                                    attrs="{ 'readonly':[('state', '!=', 'draft')]}"
+                                    domain="[('usage','=','internal')]"/>
+                                <label string="" colspan="2"/>
+                            </group>
+                            <separator colspan="4"/>
+                            <group colspan="4">
+                                <group colspan="2">
+                                    <field name="consume_line_ids"
+                                        nolabel="1" colspan="2"
+                                        attrs="{'readonly': [('state', 'not in', ['draft', 'consumption'])]}"
+                                        context="{'default_raw_location_id': raw_src_loc_id, 'default_consume_date': date, 'location_selected': raw_src_loc_id and True or False}"/>
+                                    <newline/>
+                                    <button
+                                        name='%(action_product_consume_form_view)d' type='action'
+                                        colspan="2" string='Add Consume Line' icon="gtk-add" states="draft, consumption"
+                                        context="{'default_raw_location_id': raw_src_loc_id, 'default_consume_date': date, 'location_selected': raw_src_loc_id and True or False}"/>
+                                </group>
+                                <group colspan="2">
+                                    <field name="consumed_line_ids"
+                                        nolabel="1" colspan="2" readonly="1" string="Consumed Products"/>
+                                </group>
+                            </group>
+                            <separator colspan="4"/>
+                            <group colspan="4" col="8">
+                                <field name="state" widget="statusbar"
+                                    statusbar_visible="draft,consumption,ready,done" readonly="1"/>
+                                <button name="action_draft_cancel"
+                                    states="draft" string="Cancel" type="workflow"
+                                    icon="gtk-cancel"
+                                    groups="via_product_transformation.group_transformation_consumption,via_product_transformation.group_transformation_production,via_product_transformation.group_transformation_manager"/>
+                                <button name="action_cancel_draft"
+                                    states="cancel" type="workflow" string="Set to Draft" icon=""
+                                    groups="via_product_transformation.group_transformation_production,via_product_transformation.group_transformation_manager"/>
+                                <button name="action_consume"
+                                    string="Consume" type="workflow" states="draft,consumption"
+                                    icon="gtk-ok"
+                                    attrs="{'readonly':[('consume_line_ids','=',[])]}"
+                                    groups="via_product_transformation.group_transformation_consumption,via_product_transformation.group_transformation_production,via_product_transformation.group_transformation_manager"/>
+                                <button name="action_ready"
+                                    states="consumption" string="Ready" type="workflow" icon=""
+                                    groups="via_product_transformation.group_transformation_production,via_product_transformation.group_transformation_manager"/>
+                                <button name="action_done"
+                                    states="ready" type="workflow" string="Finish" icon=""
+                                    attrs="{'readonly':[('finish_goods_line_ids','=',[])]}"
+                                    groups="via_product_transformation.group_transformation_production,via_product_transformation.group_transformation_accounting,via_product_transformation.group_transformation_manager"/>
+                            </group>
+                        </page>
+                        <page string="Finished Goods"
+                            groups="via_product_transformation.group_transformation_accounting,via_product_transformation.group_transformation_production">
+                            <field name="finish_goods_loc_id"
+                                domain="[('usage','=','internal')]"
+                                attrs="{'readonly':[('state','not in',('draft','consumption'))]}"/>
+                            <field name="total_cost" groups="via_product_transformation.group_transformation_accounting"/>
+                            <separator colspan="4"/>
+                            <field name="finish_goods_line_ids"
+                                nolabel="1" colspan="4"
+                                attrs="{'readonly':[('state','not in',('draft','consumption','ready'))]}"
+                                context="{'location_selected': finish_goods_loc_id and True or False}">
+                                <tree string="Finished Goods">
+                                    <field name="product_id"/>
+                                    <field name="product_uom_id"/>
+                                    <field name="product_qty"/>
+                                    <field name="finish_goood_loc_id"/>
+                                    <field name="prodlot_id"/>
+                                    <field name="date"/>
+                                    <field name="material_usage_per"/>
+                                    <field name="cost_amount"
+                                        groups="via_product_transformation.group_transformation_accounting"/>
+                                </tree>
+                                <form string="Finished Goods">
+                                    <group colspan="4" col="6">
+                                        <field name="product_id"
+                                            on_change="onchange_product_id(product_id)"
+                                            attrs="{'readonly':[('trans_state', 'in', ['ready'])]}" />
+                                        <field name="product_qty"
+                                            on_change="onchange_product_qty(product_qty, material_usage_per, parent.id)"
+                                            attrs="{'readonly':[('trans_state', 'in', ['ready'])]}" />
+                                        <field name="product_uom_id"
+                                            attrs="{'readonly':[('trans_state', 'in', ['ready'])]}"
+                                            nolabel="1" colspan="2"/>
+                                        <newline/>
+                                        <field name="prodlot_id"
+                                            domain="[('name','=',0)]"
+                                            attrs="{'readonly':[('trans_state', 'in', ['ready'])],'required':[('is_lot_based','=', True)]}"
+                                            context="{'default_product_id' : product_id}"/>
+                                        <field
+                                            name="finish_goood_loc_id"
+                                            attrs="{'required':[('is_loc_selected','=',False)]}"
+                                            domain="[('usage','=','internal')]"/>
+                                        <field name="stock_move_id"/>
+                                        <newline/>
+                                        <field name="date"
+                                            attrs="{'readonly':[('trans_state','in',['ready'])]}" />
+                                        <field name="material_usage_per"
+                                            on_change="onchange_material_per(material_usage_per, product_qty, parent.total_cost)"/>
+                                        <field name="cost_amount"
+                                            on_change="onchange_cost_amount(cost_amount, parent.total_cost)"
+                                            groups="via_product_transformation.group_transformation_accounting"/>
+                                        <field name="is_loc_selected" invisible="1"/>
+                                        <field name="trans_state" invisible="1"/>
+                                        <field name="is_lot_based" invisible="1"/>
+                                    </group>
+                                </form>
+                            </field>
+
+                        </page>
+                        <page string="Description">
+                            <field name="responsible_id"
+                                attrs="{'readonly':[('state','not in',('draft','consumption'))]}"/>
+                            <field name="company_id"
+                                attrs="{'readonly':[('state','!=','draft')]}"/>
+                            <separator colspan="4" string="Memo"/>
+                            <field name="memo" colspan="4" nolabel="1"
+                                attrs="{'readonly':[('state','not in',('draft','consumption'))]}"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_consume_line_tree_view">
+            <field name="name">product.consume.line.tree</field>
+            <field name="model">product.consume.line</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Products to Consume">
+                    <field name="consume_date" />
+                    <field name="product_id" />
+                    <field name="product_qty" />
+                    <field name="product_uom_id" />
+                    <field name="raw_loc_id" />
+                    <field name="prodlot_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_consume_line_form_view">
+            <field name="name">product.consume.line.form</field>
+            <field name="model">product.consume.line</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Product To Consume">
+                    <group colspan="4" col="6">
+                        <group colspan="2" col="2">
+                            <field name="product_id"
+                                on_change="onchange_product_id(product_id, product_uom_id, prodlot_id)"/>
+                            <field name="consume_date"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="product_qty"
+                                on_change="check_avail_stock_lot(prod_trans_id, product_id, product_uom_id, raw_loc_id, prodlot_id, product_qty)"/>
+                            <field name="raw_loc_id"
+                                on_change="check_avail_stock_lot(prod_trans_id, product_id, product_uom_id, raw_loc_id, prodlot_id, product_qty)"
+                                domain="[('usage','=','internal')]"
+                                attrs="{'required':[('is_loc_selected', '=', False)]}"/>
+                        </group>
+                        <group colspan="2" col="2">
+                            <field name="product_uom_id"
+                                on_change="check_avail_stock_lot(prod_trans_id, product_id, product_uom_id, raw_loc_id, prodlot_id, product_qty)"
+                                nolabel="1" colspan="2"/>
+                            <field name="prodlot_id"
+                                on_change="check_avail_stock_lot(prod_trans_id, product_id, product_uom_id, raw_loc_id, prodlot_id, product_qty)"
+                                domain="[('product_id', '=', product_id)]"
+                                attrs="{'invisible': [('is_lot_based', '=', False)], 'required':[('is_auto_assign', '=', False), ('is_lot_based', '=', True)]}"/>
+                            <field name="prod_trans_id" invisible="1"/>
+                            <field name="is_loc_selected" invisible="1"/>
+                            <field name="is_lot_based" invisible="1"/>
+                            <field name="is_auto_assign" invisible="1"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <!--Action for Product Transformation Tree and Form View -->
+        <record model="ir.actions.act_window"
+            id="action_product_transformation_tree_view">
+            <field name="name">Product Transformation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.transformation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id"
+                ref="product_transformation_tree_view" />
+        </record>
+
+        <!-- Menut Item For Product Transformation -->
+        <menuitem id="product_transformation_main_menu"
+            name="Product Transformation"
+            web_icon="images/product_tranform.png"
+            web_icon_hover="images/product_tranform-hover.png"/>
+        <menuitem id="transformation_main_menu" name="Transformation"
+            parent="product_transformation_main_menu" />
+        <menuitem id="product_transformaion_menu"
+            name="Product Transformation" parent="transformation_main_menu"
+            action="action_product_transformation_tree_view" />
+    </data>
+</openerp>

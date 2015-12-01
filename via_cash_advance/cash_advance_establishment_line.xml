@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <record model="ir.ui.view" id="cash_advance_establishment_line_tree">
+      <field name="name">Cash Advance Establishment Line</field>
+      <field name="model">cash.advance.establishment.line</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+	<tree string="Cash Advance Lines" colors="grey:state in ('cancel');red:state in ('pending');blue:state in ('draft')">
+	  <field name="date"/>
+	  <field name="product" domain="[('purchase_ok','=',True)]" on_change="onchange_product(product)"/>
+	  <field name="expense_account"/>
+	  <field name="name"/>
+	  <field name="ref"/>
+	  <field name="amount" sum="True"/>
+	  <field name="period"/>
+	  <field name="narration"/>
+	  <field name="journal_entry"/>
+	  <field name="state"/>
+	  <button name="line_cancel" states="draft" groups="via_cash_advance.group_cash_advance_user" string="Cancel" icon="gtk-cancel"/>
+	  <button name="line_pending" states="draft" groups="via_cash_advance.group_cash_advance_manager" string="Request Approval" icon="gtk-apply"/>
+	  <button name="line_cancel" states="pending" groups="via_cash_advance.group_cash_advance_manager" string="Cancel" icon="gtk-cancel"/>
+	</tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="cash_advance_establishment_line_form">
+      <field name="name">Cash Advance Establishment Line</field>
+      <field name="model">cash.advance.establishment.line</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+	<form string="Establishment Line">
+	  <field name="product" on_change="onchange_product(product)"/>
+	  <field name="topup_disbursement_journal" widget="selection"/>
+	  <field name="period"/>
+	  <field colspan="4" name="expense_account"/>
+	  <field colspan="4" name="date"/>
+	  <field name="amount"/>
+	  <field name="name"/>
+	  <field colspan="4" name="ref"/>
+	  <field colspan="4" name="narration"/>
+	  <field colspan="4" name="journal_entry"/>
+	  <field name="state"/>
+	  <group col="2" colspan="2">
+	    <button name="line_cancel" states="draft" groups="via_cash_advance.group_cash_advance_user" string="Cancel" icon="gtk-cancel"/>
+	    <button name="line_pending" states="draft" groups="via_cash_advance.group_cash_advance_manager" string="Request Approval" icon="gtk-apply"/>
+	    <button name="line_cancel" states="pending" groups="via_cash_advance.group_cash_advance_manager" string="Cancel" icon="gtk-cancel"/>
+	  </group>
+	</form>
+      </field>
+    </record>
+  </data>
+</openerp>

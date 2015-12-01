@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf8" ?>
+<openerp>
+    <data>
+        <!-- Product Transformation Template Search -->
+        <record model="ir.ui.view" id="product_transformation_template_search_view">
+            <field name="name">product.transformation.template.search</field>
+            <field name="model">product.transformation.template</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Product Transformation Template">
+                    <filter domain="[('state','=','draft')]" string="Draft" icon="terp-document-new"/>
+                    <filter domain="[('state','in','submit')]" string="Submitted" icon="terp-check"/>
+                    <filter domain="[('state','=','available')]" string="Available" icon="terp-camera_test"/>
+                    <filter domain="[('state','=','inactive')]" string="Inactive" icon="terp-dialog-close"/>
+                    <separator orientation="vertical" />
+                    <field name="name" />
+                    <field name="responsible_id" />
+                    <field name="stock_journal_id" />
+                    <newline/>
+                    <group expand="0" string="Extended Filters...">
+                        <field name="trans_loc_id" />
+                        <field name="raw_loc_id"/>
+                        <field name="finish_loc_id"/>
+                    </group>
+                    <newline/>
+                    <group expand="0" string="Group By...">
+                        <filter domain="[]" string="Responsible" context="{'group_by':'responsible_id'}" icon="terp-personal"/>
+                        <filter domain="[]" string="State" context="{'group_by':'state'}" icon="terp-stock_effects-object-colorize"/>
+                        <filter domain="[]" string="Stock Journal" context="{'group_by':'stock_journal_id'}" icon="terp-folder-orange"/>
+                        <filter domain="[]" string="Trans Location" context="{'group_by':'trans_loc_id'}" help="Transformation Location" />
+                        <filter domain="[]" string="Raw Location" context="{'group_by':'raw_loc_id'}" help="Raw Material Source Location" />
+                        <filter domain="[]" string="Finished Location" context="{'group_by':'finish_loc_id'}" help="Finished Goods Storage Location" />
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Product Transformation Template Tree -->
+        <record id="view_transformation_tempalte_tree" model="ir.ui.view">
+            <field name="name">view.transformation.template.tree</field>
+            <field name="model">product.transformation.template</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Product Transformation Template">
+                    <field name="name"/>
+                    <field name="trans_loc_id"/>
+                    <field name="stock_journal_id"/>
+                    <field name="raw_loc_id"/>
+                    <field name="finish_loc_id"/>
+                    <field name="responsible_id"/>
+                    <field name="company_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Product Transformation Template Form -->
+        <record id="view_transformation_tempalte_form" model="ir.ui.view">
+            <field name="name">view.transformation.template.form</field>
+            <field name="model">product.transformation.template</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Product Transformation Template">
+                    <field name="name" colspan="4"/>
+                    <field name="trans_loc_id" domain="[('usage','=','production')]"/>
+                    <field name="stock_journal_id"/>
+                    <notebook colspan="4">
+                        <page string="Consumption">
+                            <field name="raw_loc_id" domain="[('usage','=','internal')]" colspan="4" string="Source Location"/>
+                            <newline/>
+                            <field name="prod_cons_ids" colspan="4" nolabel="1"  context="{'location_selected': raw_loc_id and True or False}">
+                                <tree string="Products to Consume">
+                                    <field name="product_id"/>
+                                    <field name="qty"/>
+                                    <field name="product_uom_id"/>
+                                    <field name="raw_loc_id"/>
+                                </tree>
+                                <form string="Products to Consume">
+                                    <field name="product_id" required="1" on_change="onchange_product_id(product_id)"/>
+                                    <field name="qty" required="1"/>
+                                    <field name="product_uom_id" required="1"/>
+                                    <field name="raw_loc_id" domain="[('usage','=','internal')]" attrs="{'required':[('is_loc_selected','=',False)]}"/>
+                                    <field name="is_loc_selected" invisible="1"/>
+                                </form>
+                            </field>
+                            <group colspan="4" col="10">
+                                <field name="state" widget="statusbar" statusbar_visible="draft,submit,available,inactive" readonly="1"/>
+                                <button name="act_draft_cancel" string="Cancel" icon="gtk-cancel" type="workflow" states="draft" groups="via_product_transformation.group_transformation_template_user,via_product_transformation.group_transformation_manager"/>
+                                <button name="act_submit_cancel" string="Cancel" icon="gtk-cancel" type="workflow" states="submit" groups="via_product_transformation.group_transformation_template_manager,via_product_transformation.group_transformation_manager"/>
+                                <button name="act_draft" string="Set to Draft" icon="gtk-convert" type="workflow" states="cancel" groups="via_product_transformation.group_transformation_template_user,via_product_transformation.group_transformation_manager"/>
+                                <button name="act_submit" string="Submit" icon="terp-check" type="workflow" states="draft" groups="via_product_transformation.group_transformation_template_user,via_product_transformation.group_transformation_manager"/>
+                                <button name="act_available" string="Available" icon="gtk-apply" type="workflow" states="submit" groups="via_product_transformation.group_transformation_template_manager,via_product_transformation.group_transformation_manager"/>
+                                <button name="act_inactive" string="Inactive" icon="STOCK_CLOSE" type="workflow" states="available" groups="via_product_transformation.group_transformation_template_manager,via_product_transformation.group_transformation_manager"/>
+                            </group>
+                        </page>
+                        <page string="Finished Goods" groups="via_product_transformation.group_transformation_accounting">
+                            <field name="finish_loc_id" domain="[('usage','=','internal')]" colspan="3"/>
+                            <newline/>
+                            <field name="finish_goods_ids" colspan="4" nolabel="1"  context="{'location_selected': finish_loc_id and True or False}">
+                                <tree string="Finished Goods">
+                                    <field name="product_id"/>
+                                    <field name="qty"/>
+                                    <field name="product_uom_id"/>
+                                    <field name="finish_loc_id"/>
+                                    <field name="material_usage_per"/>
+                                </tree>
+                                <form string="Finished Goods">
+                                    <field name="product_id" required="1" on_change="onchange_product_id(product_id)"/>
+                                    <field name="qty" required="1"/>
+                                    <field name="product_uom_id" required="1"/>
+                                    <field name="finish_loc_id" domain="[('usage','=','internal')]" attrs="{'required':[('is_loc_selected','=',False)]}"/>
+                                    <field name="material_usage_per" required="1"/>
+                                    <field name="is_loc_selected" invisible="1"/>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Description">
+                            <field name="responsible_id"/>
+                            <field name="company_id"/>
+                            <separator string="Memo" colspan="4"/>
+                            <field name="memo" nolabel="1" colspan="4"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action of Product Transformation Template -->
+        <record id="action_product_transformation_template" model="ir.actions.act_window">
+            <field name="name">Product Transformation Templates</field>
+            <field name="res_model">product.transformation.template</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- Menu of the Templates -->
+        <menuitem
+            id="product_transformaion_template_menu"
+            parent="transformation_main_menu"
+            action="action_product_transformation_template"/>
+    </data>
+</openerp>

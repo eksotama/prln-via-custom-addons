@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    <!--  Form view of the Transformation Creation Wizard -->
+    <record id="view_create_transformation_wiz" model="ir.ui.view">
+        <field name="name">view.create.transformation.wiz</field>
+        <field name="model">create.transformation</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Create Transformation">
+                <field name="prod_trans_tmpl_id"/>
+                <newline/>
+                <field name="quantity"/>
+                <newline/>
+                <button special="cancel" string="Cancel" icon='gtk-cancel'/>
+                <button name="create_transformation" string="Create" type="object" icon="gtk-ok"/>
+            </form>
+        </field>
+    </record>
+
+    <!-- A Link to create Transformations from Transformation Template -->
+    <act_window id="action_create_transformation_wiz"
+                name="Create Transformation"
+                res_model="create.transformation"
+                src_model="product.transformation.template"
+                view_mode="form"
+                target="new"
+                view_type="form" />
+    </data>
+</openerp>

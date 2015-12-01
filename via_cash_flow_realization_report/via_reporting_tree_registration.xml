@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <record id="cash_flow_realization_tree_type"
+	    model="via.reporting.tree.type">
+      <field name="name">Cash Flow</field>
+      <field name="tree_node_type">account</field>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_11"
+	    model="via.reporting.tree.type.node">
+      <field name="name">total_expense</field>
+      <field name="label">Total Expense</field>
+      <field name="sequence">110</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_10"
+	    model="via.reporting.tree.type.node">
+      <field name="name">total_income</field>
+      <field name="label">Total Income</field>
+      <field name="sequence">100</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_9"
+	    model="via.reporting.tree.type.node">
+      <field name="name">ending</field>
+      <field name="label">Ending Balance</field>
+      <field name="sequence">90</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_8"
+	    model="via.reporting.tree.type.node">
+      <field name="name">movement</field>
+      <field name="label">Movement</field>
+      <field name="sequence">80</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_7"
+	    model="via.reporting.tree.type.node">
+      <field name="name">beginning</field>
+      <field name="label">Beginning Balance</field>
+      <field name="sequence">70</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_6"
+	    model="via.reporting.tree.type.node">
+      <field name="name">prior_expense</field>
+      <field name="label">Prior Expense</field>
+      <field name="sequence">60</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_5"
+	    model="via.reporting.tree.type.node">
+      <field name="name">unreconciled_expense</field>
+      <field name="label">Unreconciled Expense</field>
+      <field name="sequence">50</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_4"
+	    model="via.reporting.tree.type.node">
+      <field name="name">reconciled_expense</field>
+      <field name="label">Reconciled Expense</field>
+      <field name="sequence">40</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_3"
+	    model="via.reporting.tree.type.node">
+      <field name="name">prior_income</field>
+      <field name="label">Prior Income</field>
+      <field name="sequence">30</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_2"
+	    model="via.reporting.tree.type.node">
+      <field name="name">unreconciled_income</field>
+      <field name="label">Unreconciled Income</field>
+      <field name="sequence">20</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+    <record id="cash_flow_realization_tree_type_node_1"
+	    model="via.reporting.tree.type.node">
+      <field name="name">reconciled_income</field>
+      <field name="label">Reconciled Income</field>
+      <field name="sequence">10</field>
+      <field name="xml_attr_dict">{'colspan': 4}</field>
+      <field name="tree_type_id" ref="cash_flow_realization_tree_type"/>
+    </record>
+  </data>
+</openerp>

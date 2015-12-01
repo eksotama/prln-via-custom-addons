@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+      <!-- Workflow -->
+        <record id="wkf_cash_advance_establishment_basic" model="workflow">
+            <field name="name">cash.advance.establishment.basic</field>
+            <field name="osv">cash.advance.establishment</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <!-- Activity (Workflow States) -->
+        <record id="act_establishment_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_cash_advance_establishment_basic"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+        </record>
+        <record id="act_establishment_open" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_cash_advance_establishment_basic"/>
+            <field name="name">open</field>
+            <field name="kind">function</field>
+            <field name="action">action_open()</field>
+        </record>
+        <record id="act_establishment_close" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_cash_advance_establishment_basic"/>
+            <field name="name">done</field>
+            <field name="flow_stop">True</field>
+            <field name="kind">function</field>
+            <field name="action">action_close()</field>
+        </record>
+
+        <!-- Transition -->
+        <record id="trans_establishment_draft_open" model="workflow.transition">
+            <field name="act_from" ref="act_establishment_draft"/>
+            <field name="act_to" ref="act_establishment_open"/>
+	    <field name="group_id" ref="group_cash_advance_manager"/>
+            <field name="signal">establishment_open</field>
+        </record>
+
+        <record id="trans_establishment_open_close" model="workflow.transition">
+            <field name="act_from" ref="act_establishment_open"/>
+            <field name="act_to" ref="act_establishment_close"/>
+	    <field name="group_id" ref="group_cash_advance_manager"/>
+            <field name="signal">establishment_close</field>
+        </record>
+    </data>
+</openerp>

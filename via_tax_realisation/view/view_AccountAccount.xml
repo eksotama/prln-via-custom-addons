@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="form_vatRealisation_accountAccount" model="ir.ui.view">
+            <field name="name">VIA Tax Realisation : Account Form View</field>
+            <field name="model">account.account</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <data>
+                    <field name="tax_ids" position="after">
+                        <field name="invoice_realisation_account_id"
+                            domain="[('type','not in', ('view','consolidation','closed')), '|', ('company_id', '=', company_id), ('company_id', '=', False)]"/>
+                        <field name="invoice_realisation_journal_id"
+                            domain="['|', ('company_id', '=', company_id), ('company_id', '=', False)]"/>
+                        <field name="refund_realisation_account_id"
+                            domain="[('type','not in', ('view','consolidation','closed')), '|', ('company_id', '=', company_id), ('company_id', '=', False)]"/>
+                        <field name="refund_realisation_journal_id"
+                            domain="['|', ('company_id', '=', company_id), ('company_id', '=', False)]"/>
+                    </field>
+                </data>
+            </field>
+        </record>
+    </data>
+</openerp>

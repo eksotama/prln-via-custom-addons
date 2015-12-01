@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_account_taxform_create_new_sequence" model="ir.ui.view">
+            <field name="name">Create New Sequences</field>
+            <field name="model">account.taxform.create_new_sequence</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Create new sequences">
+                    <label colspan="4" string="Do you really want to create new sequence(s) for the selected tax form(s) ?"/>
+                    <newline/>
+                    <label string="" colspan="6"/>
+                    <field name="trx_code"/>
+                    <field name="branch_code"/>
+                    <button special="cancel" string="Cancel" icon="gtk-cancel"/>
+                    <button name="create_new_sequence" string="Create New Sequences" type="object" icon="terp-gtk-go-back-rtl"/>
+               </form>
+            </field>
+        </record>
+
+        <act_window id="action_account_taxform_create_new_sequence"
+            multi="True"
+            key2="client_action_multi" name="Create New Sequences"
+            res_model="account.taxform.create_new_sequence" src_model="account.taxform"
+            view_mode="form" target="new" view_type="form"
+            view_id = "view_account_taxform_create_new_sequence"/>
+    </data>
+</openerp>

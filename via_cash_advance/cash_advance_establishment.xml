@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <record model="ir.ui.view" id="cash_advance_establishment_filter">
+      <field name="name">Search Cash Advance Establishment</field>
+      <field name="model">cash.advance.establishment</field>
+      <field name="type">search</field>
+      <field name="priority">1</field>
+      <field name="arch" type="xml">
+        <search string="Search Cash Advance Establishments">
+          <group>
+            <field name="name"/>
+            <field name="employee"/>
+            <field name="cash_advance_journal" widget="selection"/>
+            <field name="state"/>
+          </group>
+          <newline/>
+          <group expand="0" string="Group By..." colspan="4" col="10">
+            <filter string="Employee" icon="terp-partner" domain="[]" context="{'group_by': 'employee'}"/>
+            <filter string="Cash Advance Journal" icon="terp-folder-orange" domain="[]" context="{'group_by':'cash_advance_journal'}"/>
+            <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="cash_advance_establishment_form">
+      <field name="name">Cash Advance Establishment</field>
+      <field name="model">cash.advance.establishment</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+        <form string="Cash Advance Establishment">
+          <group col="4" colspan="4">
+            <field name="name"/>
+            <field name="cash_advance_journal" widget="selection" on_change="onchange_ca_journal(cash_advance_journal)"/>
+            <field name="employee"/>
+            <field name="company"/>
+	    <field name="inflow"/>
+	    <field name="outflow"/>
+	    <field name="outstanding"/>
+	    <field name="currency"/>
+          </group>
+	  <notebook colspan="4">
+            <page string="Expenses">
+	      <field name="expenses" mode="tree,form" context="{'via_cash_advance.line_type': 'expense'}" colspan="4" nolabel="1"/>
+	    </page>
+            <page string="Top-ups &amp; Disbursements">
+	      <field name="id" invisible="1"/>
+	      <field name="top_ups" mode="tree,form" context="{'via_cash_advance.line_type': 'topup', 'via_cash_advance.cash_advance_journal_id': cash_advance_journal, 'via_cash_advance.establishment_id': id}" colspan="4" nolabel="1"/>
+	      <field name="disbursements" mode="tree,form" context="{'via_cash_advance.line_type': 'disbursement', 'via_cash_advance.cash_advance_journal_id': cash_advance_journal, 'via_cash_advance.establishment_id': id}" colspan="4" nolabel="1"/>
+	    </page>
+	  </notebook>
+	  <separator/>
+	  <field colspan="4" name="note"/>
+	  <field name="state"/>
+	  <button name="establishment_close" states="open" groups="via_cash_advance.group_cash_advance_manager" string="Close" icon="gtk-apply"/>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="cash_advance_establishment_tree">
+      <field name="name">Cash Advance Establishments</field>
+      <field name="model">cash.advance.establishment</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+        <tree string="Cash Advance Establishments" colors="gray:state in ('done');blue:state in ('open')">
+	  <field name="name"/>
+	  <field name="employee"/>
+	  <field name="cash_advance_journal"/>
+	  <field name="company"/>
+	  <field name="inflow" sum="True"/>
+	  <field name="outflow" sum="True"/>
+	  <field name="outstanding" sum="True"/>
+	  <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_cash_advance_establishment">
+      <field name="name">Cash Advance</field>
+      <field name="res_model">cash.advance.establishment</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+       parent="account.menu_finance_bank_and_cash"
+       id="menu_cash_advance_establishment"
+       action="action_cash_advance_establishment"/>
+
+  </data>
+</openerp>

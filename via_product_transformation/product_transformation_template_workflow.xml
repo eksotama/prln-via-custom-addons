@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Product Transformation Template Work Flow-->
+        <record id="wkf_prod_transformation_template" model="workflow">
+            <field name="name">Product Transformation Template Workflow</field>
+            <field name="osv">product.transformation.template</field>
+            <field name="on_create">True</field>
+        </record>
+
+        <!-- Product Transformatuion Template Work Flow Activities -->
+        <record id="act_draft" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_prod_transformation_template"/>
+            <field name="flow_start">True</field>
+            <field name="name">draft</field>
+            <field name="action">write({'state':'draft'})</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act_cancel" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_prod_transformation_template"/>
+            <field name="name">cancel</field>
+            <field name="action">write({'state':'cancel'})</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act_submit" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_prod_transformation_template"/>
+            <field name="name">submit</field>
+            <field name="action">write({'state':'submit'})</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act_available" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_prod_transformation_template"/>
+            <field name="name">available</field>
+            <field name="action">write({'state':'available'})</field>
+            <field name="kind">function</field>
+        </record>
+
+        <record id="act_inactive" model="workflow.activity">
+            <field name="wkf_id" ref="wkf_prod_transformation_template"/>
+            <field name="flow_stop">True</field>
+            <field name="name">inactive</field>
+            <field name="action">write({'state':'inactive'})</field>
+            <field name="kind">function</field>
+        </record>
+
+         <!-- Work Flow Transformation -->
+        <record id="t1" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">act_draft_cancel</field>
+        </record>
+
+        <record id="t2" model="workflow.transition">
+            <field name="act_from" ref="act_cancel"/>
+            <field name="act_to" ref="act_draft"/>
+            <field name="signal">act_draft</field>
+        </record>
+
+        <record id="t3" model="workflow.transition">
+            <field name="act_from" ref="act_draft"/>
+            <field name="act_to" ref="act_submit"/>
+            <field name="signal">act_submit</field>
+        </record>
+
+        <record id="t4" model="workflow.transition">
+            <field name="act_from" ref="act_submit"/>
+            <field name="act_to" ref="act_cancel"/>
+            <field name="signal">act_submit_cancel</field>
+        </record>
+
+        <record id="t5" model="workflow.transition">
+            <field name="act_from" ref="act_submit"/>
+            <field name="act_to" ref="act_available"/>
+            <field name="signal">act_available</field>
+        </record>
+
+        <record id="t6" model="workflow.transition">
+            <field name="act_from" ref="act_available"/>
+            <field name="act_to" ref="act_inactive"/>
+            <field name="signal">act_inactive</field>
+        </record>
+    </data>
+</openerp>

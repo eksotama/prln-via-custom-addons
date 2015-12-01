@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <!--
+       Users Groups
+      -->
+    <record model="res.groups" context="{'noadmin':True}" id="group_cash_advance_user">
+      <field name="name">Cash Advance / User</field>
+    </record>
+    <record model="res.groups" context="{'noadmin':True}" id="group_cash_advance_manager">
+      <field name="name">Cash Advance / Manager</field>
+    </record>
+
+    <!--
+       Multi - Company Rules
+      -->
+    <record model="ir.rule" id="cash_advance_journal_selection_rule">
+        <field name="name">Cash Advance Journal Selection Multi-company</field>
+        <field name="model_id" ref="model_cash_advance_journal_selection"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company','=',False),('company','child_of',[user.company_id.id])]</field>
+    </record>
+    <record model="ir.rule" id="cash_advance_establishment_rule">
+        <field name="name">Cash Advance Establishment Multi-company</field>
+        <field name="model_id" ref="model_cash_advance_establishment"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company','=',False),('company','child_of',[user.company_id.id])]</field>
+    </record>
+    <record model="ir.rule" id="cash_advance_establishment_line_rule">
+        <field name="name">Cash Advance Establishment Line Multi-company</field>
+        <field name="model_id" ref="model_cash_advance_establishment_line"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company','=',False),('company','child_of',[user.company_id.id])]</field>
+    </record>
+
+  </data>
+</openerp>
